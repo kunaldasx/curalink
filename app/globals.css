@@ -78,11 +78,12 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-medical-soft-100 via-white to-medical-purple-50/30 text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    @apply bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50/30 to-medical-lavender-50/40 text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
   }
 
   /* Calm, modern typography */
@@ -140,13 +141,29 @@
     @apply scale-95;
   }
 
-  /* Gradient backgrounds */
-  .gradient-teal-purple {
-    background: linear-gradient(135deg, #14b8a6 0%, #a855f7 100%);
+  /* Hopeful Gradient Backgrounds (Teal → Indigo → Lavender) */
+  .gradient-hopeful {
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%);
+  }
+
+  .gradient-teal-indigo {
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 100%);
+  }
+
+  .gradient-indigo-lavender {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   }
 
   .gradient-soft {
-    background: linear-gradient(135deg, #f0fdfc 0%, #faf5ff 100%);
+    background: linear-gradient(135deg, #f0fdfc 0%, #eef2ff 50%, #faf5ff 100%);
+  }
+
+  .gradient-mesh {
+    background: 
+      radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(20, 184, 166, 0.1) 0px, transparent 50%);
   }
 
   /* Friendly loading skeleton */
@@ -231,6 +248,369 @@
   .warning-soft {
     @apply bg-amber-50 text-amber-700 border border-amber-200 rounded-xl;
   }
+
+  /* ==================================================
+     MOBILE-FIRST UNIFIED COMPONENTS
+     ================================================== */
+
+  /* Card with hover lift and shadow bloom - Mobile optimized */
+  .card-hopeful {
+    @apply bg-white rounded-3xl p-4 md:p-6 shadow-soft border border-medical-soft-300
+           transition-all duration-300 ease-spring
+           hover:-translate-y-1 hover:shadow-bloom hover:border-medical-teal-200;
+  }
+
+  .card-hopeful-interactive {
+    @apply card-hopeful cursor-pointer
+           active:scale-[0.98] active:shadow-soft;
+  }
+
+  /* Trial/Expert/Paper Cards with animated elements */
+  .trial-card {
+    @apply card-hopeful-interactive space-y-3;
+  }
+
+  .trial-card:hover .trial-icon {
+    @apply scale-110 rotate-3;
+  }
+
+  /* Eligibility Score Ring - Circular progress */
+  .score-ring {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .score-ring-track {
+    @apply absolute inset-0 rounded-full;
+    stroke: #e2e8f0;
+    fill: none;
+    stroke-width: 4;
+  }
+
+  .score-ring-progress {
+    @apply absolute inset-0 rounded-full transition-all duration-1000 ease-spring;
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
+  .score-ring-high {
+    stroke: url(#gradient-teal-indigo);
+  }
+
+  .score-ring-medium {
+    stroke: url(#gradient-indigo-lavender);
+  }
+
+  .score-ring-low {
+    stroke: #cbd5e1;
+  }
+
+  /* Verification Badges - Trust indicators */
+  .badge-verified {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+           bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100
+           text-medical-teal-700 text-xs font-medium
+           border border-medical-teal-200/50
+           shadow-soft animate-scale-in;
+  }
+
+  .badge-verified-icon {
+    @apply h-3.5 w-3.5 text-medical-teal-600 animate-wiggle;
+  }
+
+  .badge-stat {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+           bg-medical-soft-100 text-medical-soft-500 text-xs font-medium
+           transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-600;
+  }
+
+  /* Filter Panel with spring motion - Mobile bottom sheet */
+  .filter-panel {
+    @apply bg-white rounded-t-3xl md:rounded-3xl p-6 shadow-soft-xl
+           transition-transform duration-500 ease-spring
+           md:sticky md:top-6;
+  }
+
+  .filter-panel.open {
+    @apply translate-y-0;
+  }
+
+  .filter-panel.closed {
+    @apply translate-y-full md:translate-y-0;
+  }
+
+  .filter-chip {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full
+           bg-medical-soft-100 text-sm font-medium text-gray-700
+           border border-transparent
+           transition-all duration-200 ease-spring
+           hover:bg-medical-teal-50 hover:text-medical-teal-700 hover:border-medical-teal-200
+           active:scale-95;
+  }
+
+  .filter-chip.active {
+    @apply bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100
+           text-medical-teal-700 border-medical-teal-300 shadow-soft;
+  }
+
+  /* Bottom Sheet Modal - Mobile first */
+  .bottom-sheet {
+    @apply fixed inset-x-0 bottom-0 z-50
+           bg-white rounded-t-3xl shadow-soft-xl
+           transition-transform duration-500 ease-spring
+           max-h-[90vh] overflow-y-auto;
+  }
+
+  .bottom-sheet-handle {
+    @apply w-12 h-1.5 bg-medical-soft-300 rounded-full mx-auto my-4
+           transition-colors duration-200 hover:bg-medical-soft-400;
+  }
+
+  .bottom-sheet-backdrop {
+    @apply fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40
+           transition-opacity duration-300;
+  }
+
+  /* Sticky Bottom CTA - Mobile action bar */
+  .sticky-cta {
+    @apply fixed bottom-0 inset-x-0 z-30
+           bg-white/95 backdrop-blur-md
+           border-t border-medical-soft-300 shadow-soft-lg
+           p-4 md:hidden
+           animate-slide-up;
+  }
+
+  .sticky-cta-button {
+    @apply w-full py-4 rounded-2xl font-semibold text-white
+           bg-gradient-hopeful shadow-bloom
+           transition-all duration-200
+           active:scale-95 active:shadow-soft
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Animated Stats - Numbers with color */
+  .stat-number {
+    @apply text-2xl md:text-3xl font-bold text-gradient-hopeful
+           tabular-nums animate-fade-slide;
+  }
+
+  .stat-label {
+    @apply text-xs md:text-sm text-medical-soft-500 font-medium uppercase tracking-wide;
+  }
+
+  .stat-trend-up {
+    @apply inline-flex items-center gap-1 text-emerald-600 text-sm font-medium
+           animate-bounce-soft;
+  }
+
+  .stat-trend-down {
+    @apply inline-flex items-center gap-1 text-amber-600 text-sm font-medium;
+  }
+
+  /* Supportive Empty States */
+  .empty-state {
+    @apply flex flex-col items-center justify-center
+           py-12 px-6 text-center space-y-4 animate-fade-in-up;
+  }
+
+  .empty-state-icon {
+    @apply h-24 w-24 text-medical-indigo-200 animate-float;
+  }
+
+  .empty-state-title {
+    @apply text-xl md:text-2xl font-semibold text-gray-700;
+  }
+
+  .empty-state-message {
+    @apply text-sm md:text-base text-medical-soft-500 max-w-md leading-relaxed;
+  }
+
+  .empty-state-cta {
+    @apply px-6 py-3 rounded-2xl font-medium
+           bg-gradient-teal-indigo text-white shadow-soft
+           transition-all duration-200 hover:shadow-bloom hover:scale-105
+           active:scale-95;
+  }
+
+  /* Masonry Card Layout - Mobile first, collapses to single column */
+  .masonry-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6;
+  }
+
+  .masonry-item {
+    @apply break-inside-avoid animate-fade-slide;
+  }
+
+  /* Success Animation Components */
+  .success-checkmark {
+    @apply h-16 w-16 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400
+           flex items-center justify-center text-white shadow-bloom
+           animate-success-pop;
+  }
+
+  .success-message {
+    @apply text-center space-y-3 animate-fade-in-up;
+  }
+
+  .success-title {
+    @apply text-2xl font-bold text-gradient-hopeful;
+  }
+
+  .success-description {
+    @apply text-medical-soft-500 leading-relaxed;
+  }
+
+  /* Friendly Microcopy */
+  .microcopy {
+    @apply text-xs text-medical-soft-500 italic;
+  }
+
+  .microcopy-supportive {
+    @apply microcopy flex items-center gap-1.5;
+  }
+
+  .microcopy-supportive::before {
+    content: "💙";
+    @apply text-sm;
+  }
+
+  /* Loading State - Gentle pulse with message */
+  .loading-state {
+    @apply flex flex-col items-center justify-center space-y-4 py-12;
+  }
+
+  .loading-spinner {
+    @apply h-12 w-12 rounded-full border-4 border-medical-soft-300
+           border-t-medical-teal-500 animate-spin;
+  }
+
+  .loading-message {
+    @apply text-medical-soft-500 animate-pulse-soft;
+  }
+
+  /* Chip/Tag with micro-interactions */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+           bg-medical-soft-100 text-xs font-medium text-gray-700
+           transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-700
+           hover:scale-105 active:scale-95;
+  }
+
+  .chip-removable {
+    @apply chip cursor-pointer;
+  }
+
+  .chip-remove-icon {
+    @apply h-3.5 w-3.5 transition-transform duration-200 hover:scale-110 hover:rotate-90;
+  }
+
+  /* Icon with pulse effect */
+  .icon-pulse {
+    @apply relative;
+  }
+
+  .icon-pulse::before {
+    content: "";
+    @apply absolute inset-0 rounded-full bg-current opacity-20 animate-pulse-ring;
+  }
+
+  /* Notification Badge - Attention grabber */
+  .notification-badge {
+    @apply absolute -top-1 -right-1 h-5 w-5 rounded-full
+           bg-gradient-to-r from-rose-400 to-pink-400
+           text-white text-xs font-bold
+           flex items-center justify-center shadow-soft
+           animate-scale-bounce;
+  }
+
+  /* Toggle with smooth transition */
+  .toggle {
+    @apply relative inline-flex h-6 w-11 items-center rounded-full
+           transition-colors duration-200 ease-spring
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-medical-teal-400 focus-visible:ring-offset-2;
+  }
+
+  .toggle-unchecked {
+    @apply bg-medical-soft-300;
+  }
+
+  .toggle-checked {
+    @apply bg-gradient-to-r from-medical-teal-400 to-medical-indigo-400;
+  }
+
+  .toggle-thumb {
+    @apply inline-block h-4 w-4 rounded-full bg-white shadow-soft
+           transition-transform duration-200 ease-spring;
+  }
+
+  .toggle-thumb-unchecked {
+    @apply translate-x-1;
+  }
+
+  .toggle-thumb-checked {
+    @apply translate-x-6;
+  }
+
+  /* Progress Bar - Hopeful gradient */
+  .progress-bar {
+    @apply w-full h-2 bg-medical-soft-200 rounded-full overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-hopeful rounded-full
+           transition-all duration-1000 ease-spring;
+  }
+
+  /* Section Headers - Mobile friendly */
+  .section-header {
+    @apply flex items-center justify-between mb-4 md:mb-6;
+  }
+
+  .section-title {
+    @apply text-xl md:text-2xl font-bold text-gray-800;
+  }
+
+  .section-subtitle {
+    @apply text-sm md:text-base text-medical-soft-500 mt-1;
+  }
+
+  /* Input with focus glow */
+  .input-hopeful {
+    @apply w-full px-4 py-3 rounded-2xl
+           bg-white border-2 border-medical-soft-300
+           text-gray-900 placeholder:text-medical-soft-400
+           transition-all duration-200
+           focus:outline-none focus:border-medical-teal-400 focus:shadow-glow-teal
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Button variants with hopeful gradients */
+  .btn-primary {
+    @apply px-6 py-3 rounded-2xl font-semibold text-white
+           bg-gradient-hopeful shadow-soft
+           transition-all duration-200 ease-smooth
+           hover:shadow-bloom hover:scale-105
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-2xl font-semibold
+           bg-white text-medical-teal-600 border-2 border-medical-teal-200
+           transition-all duration-200 ease-smooth
+           hover:bg-medical-teal-50 hover:scale-105
+           active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-xl font-medium text-medical-indigo-600
+           transition-all duration-200
+           hover:bg-medical-indigo-50 hover:scale-105
+           active:scale-95;
+  }
 }
 
 /* Utility classes for breathable spacing */
@@ -247,13 +627,58 @@
     @apply mt-12;
   }
 
-  /* Text gradient utilities */
-  .text-gradient-teal-purple {
-    @apply bg-gradient-to-r from-medical-teal-500 to-medical-purple-500 bg-clip-text text-transparent;
+  /* Text gradient utilities - Hopeful palette */
+  .text-gradient-hopeful {
+    @apply bg-gradient-to-r from-medical-teal-500 via-medical-indigo-500 to-medical-lavender-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-teal-indigo {
+    @apply bg-gradient-to-r from-medical-teal-600 to-medical-indigo-600 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-indigo-lavender {
+    @apply bg-gradient-to-r from-medical-indigo-600 to-medical-lavender-600 bg-clip-text text-transparent;
   }
 
   .text-gradient-soft {
-    @apply bg-gradient-to-r from-medical-teal-600 to-medical-purple-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-medical-teal-400 to-medical-indigo-400 bg-clip-text text-transparent;
+  }
+
+  /* Mobile-first responsive containers */
+  .container-mobile {
+    @apply w-full px-4 sm:px-6 lg:px-8 mx-auto;
+    max-width: 100%;
+  }
+
+  .container-mobile-sm {
+    @apply container-mobile;
+    max-width: 640px;
+  }
+
+  .container-mobile-md {
+    @apply container-mobile;
+    max-width: 768px;
+  }
+
+  .container-mobile-lg {
+    @apply container-mobile;
+    max-width: 1024px;
+  }
+
+  /* Safe area padding for mobile devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
   }
 }
 

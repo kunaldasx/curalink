@@ -436,14 +436,14 @@ export default function PatientClinicalTrials() {
             <CardContent className="space-y-4">
               {/* AI-Generated Summary */}
               {trial.summary && (
-                <div className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border-l-4 border-medical-indigo-400 shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="h-4 w-4 text-purple-600" />
-                    <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
+                    <Sparkles className="h-4 w-4 text-medical-indigo-500" />
+                    <span className="text-xs font-semibold text-medical-indigo-600 dark:text-medical-indigo-400">
                       AI-Generated Summary
                     </span>
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{trial.summary}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{trial.summary}</p>
                 </div>
               )}
 
