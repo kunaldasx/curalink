@@ -74,6 +74,12 @@ export async function GET(req: NextRequest) {
       
       const otherUserId = otherUser._id.toString();
 
+      // If current user is a researcher, only include conversations with patients
+      // (researcher-to-researcher conversations are handled via /api/collaborators/messages)
+      if (currentUser.role === 'researcher' && otherUser.role === 'researcher') {
+        continue; // Skip this conversation
+      }
+
       if (!conversationsMap.has(otherUserId)) {
         // Count unread messages from this user
         const unreadCount = await Message.countDocuments({
