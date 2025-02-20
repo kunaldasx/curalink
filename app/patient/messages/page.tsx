@@ -122,13 +122,15 @@ export default function PatientMessages() {
   const selectedConversation = conversations.find(c => c.userId === selectedUserId);
 
   return (
-    <div className="h-[calc(100vh-120px)] flex gap-4">
+    <div className="h-[calc(100vh-120px)] flex flex-col md:flex-row gap-4 md:gap-6">
       {/* Conversations List */}
-      <Card className="w-80 flex flex-col">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            Messages
+      <Card className="w-full md:w-80 flex flex-col rounded-2xl shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-medical-teal-50 to-medical-indigo-50 border-b-2 border-medical-teal-100">
+          <CardTitle className="flex items-center gap-2 text-gray-800">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
+              <MessageSquare className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold">Messages</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto p-0">
@@ -150,23 +152,27 @@ export default function PatientMessages() {
                 <button
                   key={conv.userId}
                   onClick={() => setSelectedUserId(conv.userId)}
-                  className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                    selectedUserId === conv.userId ? 'bg-blue-50' : ''
+                  className={`w-full p-4 text-left transition-all duration-200 hover:bg-gradient-to-r hover:from-medical-teal-50 hover:to-medical-indigo-50 ${
+                    selectedUserId === conv.userId 
+                      ? 'bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 border-l-4 border-medical-teal-500' 
+                      : 'border-l-4 border-transparent'
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-1">
+                  <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium text-sm">{conv.userName}</span>
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
+                        <User className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="font-semibold text-sm text-gray-800">{conv.userName}</span>
                     </div>
                     {conv.unreadCount > 0 && (
-                      <Badge variant="default" className="text-xs">
+                      <Badge className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 text-white">
                         {conv.unreadCount}
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-gray-600 truncate">{conv.lastMessage}</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-sm text-gray-600 truncate ml-10">{conv.lastMessage}</p>
+                  <p className="text-xs text-gray-500 mt-1 ml-10">
                     {new Date(conv.lastMessageTime).toLocaleString()}
                   </p>
                 </button>
@@ -177,16 +183,20 @@ export default function PatientMessages() {
       </Card>
 
       {/* Chat Window */}
-      <Card className="flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col rounded-2xl shadow-lg border-0">
         {selectedUserId ? (
           <>
-            <CardHeader className="border-b">
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                {selectedConversation?.userName || 'Researcher'}
-                <Badge variant="outline" className="ml-2">
-                  {selectedConversation?.userRole || 'Researcher'}
-                </Badge>
+            <CardHeader className="bg-gradient-to-r from-medical-indigo-50 to-medical-lavender-50 border-b-2 border-medical-indigo-100">
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-medical-indigo-400 to-medical-lavender-400 flex items-center justify-center">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <span className="text-xl font-bold text-gray-800">{selectedConversation?.userName || 'Researcher'}</span>
+                  <Badge className="ml-2 px-3 py-1 rounded-full bg-gradient-to-r from-medical-indigo-100 to-medical-lavender-100 text-medical-indigo-700 border border-medical-indigo-300">
+                    {selectedConversation?.userRole || 'Researcher'}
+                  </Badge>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto p-4 space-y-3">

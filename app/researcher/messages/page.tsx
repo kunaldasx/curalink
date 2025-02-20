@@ -197,16 +197,17 @@ export default function ResearcherMessages() {
   };
 
   return (
-    <div className="h-[calc(100vh-120px)] flex gap-4">
+    <div className="h-[calc(100vh-120px)] flex flex-col md:flex-row gap-4 md:gap-6">
       {/* Conversations List with Tabs */}
-      <Card className="w-96 flex flex-col">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between mb-3">
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Messages
-            </CardTitle>
-          </div>
+      <Card className="w-full md:w-96 flex flex-col rounded-2xl shadow-lg border-0">
+        <CardHeader className="bg-gradient-to-r from-medical-teal-50 to-medical-indigo-50 border-b-2 border-medical-teal-100">
+          <CardTitle className="flex items-center gap-2 text-gray-800">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
+              <MessageSquare className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-xl font-bold">Messages</span>
+          </CardTitle>
+        </CardHeader>
           
           {/* Search */}
           <div className="relative">

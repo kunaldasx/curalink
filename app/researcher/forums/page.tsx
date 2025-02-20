@@ -158,31 +158,48 @@ export default function ResearcherForums() {
   if (view === 'categories') {
     return (
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex justify-between items-start gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Community Forums</h1>
-            <p className="text-gray-600">
-              Create communities, answer patient questions, and share medical expertise
-            </p>
+        {/* Page Header with Gradient */}
+        <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-3"
+                style={{
+                  background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}
+              >
+                Community Forums
+              </h1>
+              <p className="text-lg text-gray-700">
+                💬 Create communities, answer patient questions, and share medical expertise
+              </p>
+            </div>
+            <Button 
+              onClick={() => setShowCreateCategory(true)}
+              className="px-6 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg"
+            >
+              <Plus className="mr-2 h-5 w-5" />
+              New Category
+            </Button>
           </div>
-          <Button onClick={() => setShowCreateCategory(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Category
-          </Button>
         </div>
 
-        <Card className="mb-6 border-green-200 bg-green-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-green-900 mb-1">Researcher Privileges</p>
-                <p className="text-xs text-green-700">
-                  • Create and moderate forum categories<br />
-                  • Answer patient questions with verified responses<br />
-                  • Lead discussions and share expertise<br />
-                  • Pin, hide, and flag content for quality control
-                </p>
+        <Card className="mb-8 rounded-2xl shadow-lg border-0 overflow-hidden animate-fade-in">
+          <CardContent className="pt-6 pb-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center flex-shrink-0">
+                <Shield className="h-6 w-6 text-green-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-base font-semibold text-gray-800 mb-3">Researcher Privileges</p>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p className="flex items-center gap-2">✓ Create and moderate forum categories</p>
+                  <p className="flex items-center gap-2">✓ Answer patient questions with verified responses</p>
+                  <p className="flex items-center gap-2">✓ Lead discussions and share expertise</p>
+                  <p className="flex items-center gap-2">✓ Pin, hide, and flag content for quality control</p>
+                </div>
               </div>
             </div>
           </CardContent>

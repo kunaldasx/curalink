@@ -111,25 +111,37 @@ export default function PatientForums() {
   if (view === 'categories') {
     return (
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Health Q&A Forums</h1>
-          <p className="text-gray-600">
-            Ask questions and get verified answers from medical researchers and experts
+        {/* Page Header with Gradient */}
+        <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3"
+            style={{
+              background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            Health Q&A Forums
+          </h1>
+          <p className="text-lg text-gray-700">
+            💬 Ask questions and get verified answers from medical researchers and experts
           </p>
         </div>
 
-        <Card className="mb-6 border-blue-200 bg-blue-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-blue-900 mb-1">Medical-Grade Q&A Platform</p>
-                <p className="text-xs text-blue-700">
-                  • Only verified researchers can answer questions<br />
-                  • Post your questions in relevant categories<br />
-                  • All answers are from medical professionals<br />
-                  • No peer-to-peer medical advice
-                </p>
+        <Card className="mb-8 rounded-2xl shadow-lg border-0 overflow-hidden animate-fade-in">
+          <CardContent className="pt-6 pb-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-medical-teal-100 to-medical-indigo-100 flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="h-6 w-6 text-medical-teal-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-base font-semibold text-gray-800 mb-3">Medical-Grade Q&A Platform</p>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p className="flex items-center gap-2">✓ Only verified researchers can answer questions</p>
+                  <p className="flex items-center gap-2">✓ Post your questions in relevant categories</p>
+                  <p className="flex items-center gap-2">✓ All answers are from medical professionals</p>
+                  <p className="flex items-center gap-2">✓ No peer-to-peer medical advice</p>
+                </div>
               </div>
             </div>
           </CardContent>

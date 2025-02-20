@@ -84,43 +84,57 @@ export default function ResearcherPublications() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Research Publications</h1>
-        <p className="text-gray-600">
-          Search PubMed and browse medical research literature
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3"
+          style={{
+            background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Research Publications
+        </h1>
+        <p className="text-lg text-gray-700">
+          📚 Search PubMed and browse medical research literature
         </p>
       </div>
 
       {/* Search Card */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex gap-4">
+      <Card className="mb-8 rounded-2xl shadow-lg border-0">
+        <CardContent className="pt-6 pb-6">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <Label htmlFor="query">Search PubMed</Label>
+              <Label htmlFor="query" className="text-base font-semibold text-gray-800 mb-2 block">Search PubMed</Label>
               <Input
                 id="query"
                 placeholder="e.g., glioblastoma immunotherapy, CRISPR gene editing, Alzheimer's biomarkers"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="text-base"
+                className="text-base rounded-xl border-2 border-gray-200 focus:border-medical-teal-400 focus:ring-4 focus:ring-medical-teal-100 transition-all duration-200 p-4"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Search for research articles by topic, author, disease, or treatment
+              <p className="text-sm text-gray-600 mt-2">
+                💡 Search for research articles by topic, author, disease, or treatment
               </p>
             </div>
             <div className="flex items-end gap-2">
-              <Button onClick={handleSearch} disabled={loading || !query}>
-                <Search className="mr-2 h-4 w-4" />
+              <Button 
+                onClick={handleSearch} 
+                disabled={loading || !query}
+                className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50"
+              >
+                <Search className="mr-2 h-5 w-5" />
                 {loading ? 'Searching...' : 'Search'}
               </Button>
               {publications.length > 0 && (
                 <Button
-                  variant="outline"
                   onClick={resetSearch}
                   disabled={loading}
+                  className="px-6 py-4 rounded-xl font-semibold bg-white border-2 border-gray-300 text-gray-700 hover:border-medical-teal-400 hover:bg-medical-teal-50 transition-all duration-200"
                 >
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <RefreshCw className="mr-2 h-5 w-5" />
                   Clear
                 </Button>
               )}

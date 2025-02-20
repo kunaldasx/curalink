@@ -11,7 +11,7 @@ export default function PatientLayout({
       <Navbar />
       <div className="flex">
         <Sidebar role="patient" />
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-4 md:p-8 pt-16 md:pt-8">{children}</main>
       </div>
     </div>
   );

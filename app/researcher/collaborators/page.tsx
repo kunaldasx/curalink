@@ -433,9 +433,21 @@ export default function ResearcherCollaborators() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Collaborators</h1>
-        <p className="text-gray-600">Connect with researchers and build your network</p>
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3"
+          style={{
+            background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Collaborators
+        </h1>
+        <p className="text-lg text-gray-700">
+          🤝 Connect with researchers and build your network
+        </p>
       </div>
 
       {/* Tabs */}
@@ -476,20 +488,25 @@ export default function ResearcherCollaborators() {
       {/* Search Tab */}
       {activeTab === 'search' && (
         <>
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <div className="flex gap-4">
+          <Card className="mb-8 rounded-2xl shadow-lg border-0">
+            <CardContent className="pt-6 pb-6">
+              <div className="flex flex-col md:flex-row gap-3">
                 <Input
                   placeholder="Search by name, specialty, or research interest..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1 text-base rounded-xl border-2 border-gray-200 focus:border-medical-teal-400 focus:ring-4 focus:ring-medical-teal-100 transition-all duration-200 p-4"
                 />
-                <Button onClick={handleSearch} disabled={loading}>
+                <Button 
+                  onClick={handleSearch} 
+                  disabled={loading}
+                  className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50"
+                >
                   {loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   ) : (
-                    <Search className="mr-2 h-4 w-4" />
+                    <Search className="mr-2 h-5 w-5" />
                   )}
                   Search
                 </Button>

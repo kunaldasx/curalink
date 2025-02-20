@@ -55,12 +55,26 @@ export default function PatientFavorites() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          <Heart className="h-8 w-8 text-red-500 fill-red-500" />
-          My Favorites
-        </h1>
-        <p className="text-gray-600">Your saved clinical trials, publications, and experts</p>
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center animate-pulse">
+            <Heart className="h-8 w-8 text-white fill-white" />
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold"
+            style={{
+              background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
+            My Favorites
+          </h1>
+        </div>
+        <p className="text-lg text-gray-700">
+          💾 Your saved clinical trials, publications, and experts
+        </p>
       </div>
 
       {loading && (
@@ -72,18 +86,26 @@ export default function PatientFavorites() {
       )}
 
       {!loading && totalCount === 0 && (
-        <Card className="border-dashed">
+        <Card className="rounded-2xl shadow-lg border-0">
           <CardContent className="pt-6 text-center py-12">
-            <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No Favorites Yet</h3>
-            <p className="text-muted-foreground mb-4">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center">
+              <Heart className="h-10 w-10 text-red-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-3">No Favorites Yet</h3>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
               Start saving clinical trials, publications, and experts you're interested in
             </p>
-            <div className="flex gap-2 justify-center">
-              <Button onClick={() => router.push('/patient/trials')}>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button 
+                onClick={() => router.push('/patient/clinical-trials')}
+                className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg"
+              >
                 Browse Clinical Trials
               </Button>
-              <Button variant="outline" onClick={() => router.push('/patient/publications')}>
+              <Button 
+                onClick={() => router.push('/patient/publications')}
+                className="px-8 py-4 rounded-xl font-semibold bg-white border-2 border-medical-indigo-300 text-medical-indigo-600 hover:bg-medical-indigo-50 transition-all duration-200 hover:scale-105"
+              >
                 Browse Publications
               </Button>
             </div>

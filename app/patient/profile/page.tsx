@@ -137,37 +137,61 @@ export default function PatientProfile() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">My Profile</h1>
-          <p className="text-gray-600">View and edit your personal information and preferences</p>
-        </div>
-        {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)}>
-            <Edit2 className="mr-2 h-4 w-4" />
-            Edit Profile
-          </Button>
-        ) : (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCancel}>
-              <X className="mr-2 h-4 w-4" />
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </>
-              )}
-            </Button>
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-3"
+              style={{
+                background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}
+            >
+              My Profile
+            </h1>
+            <p className="text-lg text-gray-700">
+              👤 View and edit your personal information and preferences
+            </p>
           </div>
-        )}
+          {!isEditing ? (
+            <Button 
+              onClick={() => setIsEditing(true)}
+              className="px-6 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg"
+            >
+              <Edit2 className="mr-2 h-5 w-5" />
+              Edit Profile
+            </Button>
+          ) : (
+            <div className="flex gap-3">
+              <Button 
+                onClick={handleCancel}
+                className="px-6 py-4 rounded-xl font-semibold bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-400 transition-all duration-200"
+              >
+                <X className="mr-2 h-5 w-5" />
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSave} 
+                disabled={saving}
+                className="px-6 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-5 w-5" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {refreshing && (
@@ -184,10 +208,10 @@ export default function PatientProfile() {
       )}
 
       {/* Personal Information */}
-      <Card className="mb-6">
+      <Card className="mb-8 rounded-2xl shadow-lg border-0">
         <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-          <CardDescription>Your basic account details</CardDescription>
+          <CardTitle className="text-xl font-bold text-gray-800">Personal Information</CardTitle>
+          <CardDescription className="text-base">Your basic account details</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">

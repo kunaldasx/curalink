@@ -199,40 +199,57 @@ export default function PatientClinicalTrials() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Clinical Trials</h1>
-        <p className="text-gray-600">
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3"
+          style={{
+            background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Clinical Trials
+        </h1>
+        <p className="text-lg text-gray-700">
           {isPersonalized
-            ? 'Personalized trials based on your conditions'
-            : 'Search results for clinical trials'}
+            ? '🧬 Personalized trials based on your conditions and location'
+            : '🔍 Search results for clinical trials'}
         </p>
       </div>
 
       {/* User Conditions & Location Toggle */}
       {userConditions.length > 0 && (
-        <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <Card className="mb-8 rounded-2xl shadow-lg border-0 overflow-hidden animate-fade-in">
+          <CardContent className="pt-6 pb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="flex-1">
-                <p className="text-sm font-medium mb-2">🔍 Your conditions:</p>
+                <p className="text-base font-semibold mb-3 text-gray-800 flex items-center gap-2">
+                  <span className="text-xl">🔍</span> Your conditions
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {userConditions.map((condition, i) => (
-                    <Badge key={i} variant="secondary" className="bg-blue-100 text-blue-700">
+                    <Badge key={i} className="px-4 py-2 rounded-xl bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 text-medical-teal-700 border border-medical-teal-300 font-medium hover:scale-105 transition-transform duration-200">
                       {condition}
                     </Badge>
                   ))}
                 </div>
               </div>
               {userLocation && isPersonalized && (
-                <div className="flex flex-col items-start md:items-end gap-2">
-                  <p className="text-xs text-muted-foreground">
-                    📍 {userLocation.city}, {userLocation.country}
+                <div className="flex flex-col items-start md:items-end gap-3">
+                  <p className="text-sm text-gray-600 flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-medical-teal-500" />
+                    {userLocation.city}, {userLocation.country}
                   </p>
                   <Button
-                    variant={nearbyOnly ? 'default' : 'outline'}
                     size="sm"
                     onClick={toggleLocation}
                     disabled={loading}
+                    className={`px-6 py-5 rounded-xl font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg ${
+                      nearbyOnly 
+                        ? 'bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 text-white hover:from-medical-teal-600 hover:to-medical-indigo-600'
+                        : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-medical-teal-400'
+                    }`}
                   >
                     {nearbyOnly ? (
                       <>
@@ -254,22 +271,38 @@ export default function PatientClinicalTrials() {
       )}
 
       {/* Search Card */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="space-y-4">
+      <Card className="mb-8 rounded-2xl shadow-lg border-0 animate-fade-in">
+        <CardContent className="pt-6 pb-6">
+          <div className="space-y-6">
             {/* Main Search */}
             <div>
-              <Label htmlFor="query">Search Clinical Trials</Label>
-              <Input
-                id="query"
-                placeholder="e.g., Lung Cancer Immunotherapy Trials, Diabetes Treatment"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="text-base"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Search by condition, treatment type, or keywords
+              <Label htmlFor="query" className="text-base font-semibold text-gray-800 mb-2 block">
+                Search Clinical Trials
+              </Label>
+              <div className="flex flex-col md:flex-row gap-3">
+                <Input
+                  id="query"
+                  placeholder="e.g., Lung Cancer Immunotherapy Trials, Diabetes Treatment"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="flex-1 text-base rounded-xl border-2 border-gray-200 focus:border-medical-teal-400 focus:ring-4 focus:ring-medical-teal-100 transition-all duration-200 p-4"
+                />
+                <Button 
+                  onClick={handleSearch} 
+                  disabled={loading}
+                  className="px-8 py-4 rounded-xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white transition-all duration-200 hover:scale-105 hover:shadow-lg disabled:opacity-50 group"
+                >
+                  {loading ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    <Search className="mr-2 h-5 w-5" />
+                  )}
+                  Search
+                </Button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                💡 Search by condition, treatment type, or keywords
               </p>
             </div>
 

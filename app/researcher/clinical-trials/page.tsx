@@ -200,9 +200,21 @@ export default function ResearcherTrials() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Clinical Trials</h1>
-        <p className="text-gray-600">Manage your trials and discover collaboration opportunities</p>
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3"
+          style={{
+            background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Clinical Trials
+        </h1>
+        <p className="text-lg text-gray-700">
+          🧬 Manage your trials and discover collaboration opportunities
+        </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

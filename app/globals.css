@@ -76,7 +76,7 @@
   * {
     @apply border-border;
   }
-  
+
   body {
     @apply bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50/30 to-medical-lavender-50/40 text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -87,7 +87,12 @@
   }
 
   /* Calm, modern typography */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-semibold tracking-tight;
     line-height: 1.3;
   }
@@ -119,11 +124,12 @@
 
 /* Micro-animations & Interactions */
 @layer components {
+
   /* Card hover lift */
   .card-lift {
     @apply transition-all duration-300 ease-smooth;
   }
-  
+
   .card-lift:hover {
     @apply -translate-y-1 shadow-soft-lg;
   }
@@ -159,7 +165,7 @@
   }
 
   .gradient-mesh {
-    background: 
+    background:
       radial-gradient(at 0% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
       radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
       radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
@@ -204,11 +210,13 @@
   }
 
   /* Icon curves - soft, empathetic */
-  svg, .icon {
+  svg,
+  .icon {
     @apply transition-transform duration-200 ease-smooth;
   }
 
-  svg:hover, .icon:hover {
+  svg:hover,
+  .icon:hover {
     @apply scale-110;
   }
 
@@ -219,7 +227,7 @@
 
   /* Soft shadows for depth */
   .shadow-comfort {
-    box-shadow: 
+    box-shadow:
       0 1px 3px rgba(20, 184, 166, 0.05),
       0 4px 12px rgba(168, 85, 247, 0.05);
   }
@@ -255,14 +263,11 @@
 
   /* Card with hover lift and shadow bloom - Mobile optimized */
   .card-hopeful {
-    @apply bg-white rounded-3xl p-4 md:p-6 shadow-soft border border-medical-soft-300
-           transition-all duration-300 ease-spring
-           hover:-translate-y-1 hover:shadow-bloom hover:border-medical-teal-200;
+    @apply bg-white rounded-3xl p-4 md:p-6 shadow-soft border border-medical-soft-300 transition-all duration-300 ease-spring hover:-translate-y-1 hover:shadow-bloom hover:border-medical-teal-200;
   }
 
   .card-hopeful-interactive {
-    @apply card-hopeful cursor-pointer
-           active:scale-[0.98] active:shadow-soft;
+    @apply card-hopeful cursor-pointer active:scale-[0.98] active:shadow-soft;
   }
 
   /* Trial/Expert/Paper Cards with animated elements */
@@ -309,11 +314,7 @@
 
   /* Verification Badges - Trust indicators */
   .badge-verified {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-           bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100
-           text-medical-teal-700 text-xs font-medium
-           border border-medical-teal-200/50
-           shadow-soft animate-scale-in;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 text-medical-teal-700 text-xs font-medium border border-medical-teal-200/50 shadow-soft animate-scale-in;
   }
 
   .badge-verified-icon {
@@ -321,16 +322,12 @@
   }
 
   .badge-stat {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-           bg-medical-soft-100 text-medical-soft-500 text-xs font-medium
-           transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-600;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-medical-soft-100 text-medical-soft-500 text-xs font-medium transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-600;
   }
 
   /* Filter Panel with spring motion - Mobile bottom sheet */
   .filter-panel {
-    @apply bg-white rounded-t-3xl md:rounded-3xl p-6 shadow-soft-xl
-           transition-transform duration-500 ease-spring
-           md:sticky md:top-6;
+    @apply bg-white rounded-t-3xl md:rounded-3xl p-6 shadow-soft-xl transition-transform duration-500 ease-spring md:sticky md:top-6;
   }
 
   .filter-panel.open {
@@ -342,58 +339,39 @@
   }
 
   .filter-chip {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full
-           bg-medical-soft-100 text-sm font-medium text-gray-700
-           border border-transparent
-           transition-all duration-200 ease-spring
-           hover:bg-medical-teal-50 hover:text-medical-teal-700 hover:border-medical-teal-200
-           active:scale-95;
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full bg-medical-soft-100 text-sm font-medium text-gray-700 border border-transparent transition-all duration-200 ease-spring hover:bg-medical-teal-50 hover:text-medical-teal-700 hover:border-medical-teal-200 active:scale-95;
   }
 
   .filter-chip.active {
-    @apply bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100
-           text-medical-teal-700 border-medical-teal-300 shadow-soft;
+    @apply bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 text-medical-teal-700 border-medical-teal-300 shadow-soft;
   }
 
   /* Bottom Sheet Modal - Mobile first */
   .bottom-sheet {
-    @apply fixed inset-x-0 bottom-0 z-50
-           bg-white rounded-t-3xl shadow-soft-xl
-           transition-transform duration-500 ease-spring
-           max-h-[90vh] overflow-y-auto;
+    @apply fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-soft-xl transition-transform duration-500 ease-spring max-h-[90vh] overflow-y-auto;
   }
 
   .bottom-sheet-handle {
-    @apply w-12 h-1.5 bg-medical-soft-300 rounded-full mx-auto my-4
-           transition-colors duration-200 hover:bg-medical-soft-400;
+    @apply w-12 h-1.5 bg-medical-soft-300 rounded-full mx-auto my-4 transition-colors duration-200 hover:bg-medical-soft-400;
   }
 
   .bottom-sheet-backdrop {
-    @apply fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40
-           transition-opacity duration-300;
+    @apply fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 transition-opacity duration-300;
   }
 
   /* Sticky Bottom CTA - Mobile action bar */
   .sticky-cta {
-    @apply fixed bottom-0 inset-x-0 z-30
-           bg-white/95 backdrop-blur-md
-           border-t border-medical-soft-300 shadow-soft-lg
-           p-4 md:hidden
-           animate-slide-up;
+    @apply fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-medical-soft-300 shadow-soft-lg p-4 md:hidden animate-slide-up;
   }
 
   .sticky-cta-button {
-    @apply w-full py-4 rounded-2xl font-semibold text-white
-           bg-gradient-hopeful shadow-bloom
-           transition-all duration-200
-           active:scale-95 active:shadow-soft
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full py-4 rounded-2xl font-semibold text-white shadow-bloom transition-all duration-200 active:scale-95 active:shadow-soft disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%);
   }
 
   /* Animated Stats - Numbers with color */
   .stat-number {
-    @apply text-2xl md:text-3xl font-bold text-gradient-hopeful
-           tabular-nums animate-fade-slide;
+    @apply text-2xl md:text-3xl font-bold text-gradient-hopeful tabular-nums animate-fade-slide;
   }
 
   .stat-label {
@@ -401,8 +379,7 @@
   }
 
   .stat-trend-up {
-    @apply inline-flex items-center gap-1 text-emerald-600 text-sm font-medium
-           animate-bounce-soft;
+    @apply inline-flex items-center gap-1 text-emerald-600 text-sm font-medium animate-bounce-soft;
   }
 
   .stat-trend-down {
@@ -411,8 +388,7 @@
 
   /* Supportive Empty States */
   .empty-state {
-    @apply flex flex-col items-center justify-center
-           py-12 px-6 text-center space-y-4 animate-fade-in-up;
+    @apply flex flex-col items-center justify-center py-12 px-6 text-center space-y-4 animate-fade-in-up;
   }
 
   .empty-state-icon {
@@ -428,10 +404,8 @@
   }
 
   .empty-state-cta {
-    @apply px-6 py-3 rounded-2xl font-medium
-           bg-gradient-teal-indigo text-white shadow-soft
-           transition-all duration-200 hover:shadow-bloom hover:scale-105
-           active:scale-95;
+    @apply px-6 py-3 rounded-2xl font-medium text-white shadow-soft transition-all duration-200 hover:shadow-bloom hover:scale-105 active:scale-95;
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 100%);
   }
 
   /* Masonry Card Layout - Mobile first, collapses to single column */
@@ -445,9 +419,7 @@
 
   /* Success Animation Components */
   .success-checkmark {
-    @apply h-16 w-16 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400
-           flex items-center justify-center text-white shadow-bloom
-           animate-success-pop;
+    @apply h-16 w-16 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-white shadow-bloom animate-success-pop;
   }
 
   .success-message {
@@ -482,8 +454,7 @@
   }
 
   .loading-spinner {
-    @apply h-12 w-12 rounded-full border-4 border-medical-soft-300
-           border-t-medical-teal-500 animate-spin;
+    @apply h-12 w-12 rounded-full border-4 border-medical-soft-300 border-t-medical-teal-500 animate-spin;
   }
 
   .loading-message {
@@ -492,10 +463,7 @@
 
   /* Chip/Tag with micro-interactions */
   .chip {
-    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
-           bg-medical-soft-100 text-xs font-medium text-gray-700
-           transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-700
-           hover:scale-105 active:scale-95;
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-medical-soft-100 text-xs font-medium text-gray-700 transition-all duration-200 hover:bg-medical-indigo-50 hover:text-medical-indigo-700 hover:scale-105 active:scale-95;
   }
 
   .chip-removable {
@@ -518,18 +486,12 @@
 
   /* Notification Badge - Attention grabber */
   .notification-badge {
-    @apply absolute -top-1 -right-1 h-5 w-5 rounded-full
-           bg-gradient-to-r from-rose-400 to-pink-400
-           text-white text-xs font-bold
-           flex items-center justify-center shadow-soft
-           animate-scale-bounce;
+    @apply absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-rose-400 to-pink-400 text-white text-xs font-bold flex items-center justify-center shadow-soft animate-scale-bounce;
   }
 
   /* Toggle with smooth transition */
   .toggle {
-    @apply relative inline-flex h-6 w-11 items-center rounded-full
-           transition-colors duration-200 ease-spring
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-medical-teal-400 focus-visible:ring-offset-2;
+    @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-medical-teal-400 focus-visible:ring-offset-2;
   }
 
   .toggle-unchecked {
@@ -541,8 +503,7 @@
   }
 
   .toggle-thumb {
-    @apply inline-block h-4 w-4 rounded-full bg-white shadow-soft
-           transition-transform duration-200 ease-spring;
+    @apply inline-block h-4 w-4 rounded-full bg-white shadow-soft transition-transform duration-200 ease-spring;
   }
 
   .toggle-thumb-unchecked {
@@ -559,8 +520,8 @@
   }
 
   .progress-fill {
-    @apply h-full bg-gradient-hopeful rounded-full
-           transition-all duration-1000 ease-spring;
+    @apply h-full rounded-full transition-all duration-1000 ease-spring;
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%);
   }
 
   /* Section Headers - Mobile friendly */
@@ -578,52 +539,35 @@
 
   /* Input with focus glow */
   .input-hopeful {
-    @apply w-full px-4 py-3 rounded-2xl
-           bg-white border-2 border-medical-soft-300
-           text-gray-900 placeholder:text-medical-soft-400
-           transition-all duration-200
-           focus:outline-none focus:border-medical-teal-400 focus:shadow-glow-teal
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply w-full px-4 py-3 rounded-2xl bg-white border-2 border-medical-soft-300 text-gray-900 placeholder:text-medical-soft-400 transition-all duration-200 focus:outline-none focus:border-medical-teal-400 focus:shadow-glow-teal disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   /* Button variants with hopeful gradients */
   .btn-primary {
-    @apply px-6 py-3 rounded-2xl font-semibold text-white
-           bg-gradient-hopeful shadow-soft
-           transition-all duration-200 ease-smooth
-           hover:shadow-bloom hover:scale-105
-           active:scale-95
-           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+    @apply px-6 py-3 rounded-2xl font-semibold text-white shadow-soft transition-all duration-200 ease-smooth hover:shadow-bloom hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+    background: linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%);
   }
 
   .btn-secondary {
-    @apply px-6 py-3 rounded-2xl font-semibold
-           bg-white text-medical-teal-600 border-2 border-medical-teal-200
-           transition-all duration-200 ease-smooth
-           hover:bg-medical-teal-50 hover:scale-105
-           active:scale-95
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply px-6 py-3 rounded-2xl font-semibold bg-white text-medical-teal-600 border-2 border-medical-teal-200 transition-all duration-200 ease-smooth hover:bg-medical-teal-50 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-ghost {
-    @apply px-4 py-2 rounded-xl font-medium text-medical-indigo-600
-           transition-all duration-200
-           hover:bg-medical-indigo-50 hover:scale-105
-           active:scale-95;
+    @apply px-4 py-2 rounded-xl font-medium text-medical-indigo-600 transition-all duration-200 hover:bg-medical-indigo-50 hover:scale-105 active:scale-95;
   }
 }
 
 /* Utility classes for breathable spacing */
 @layer utilities {
-  .space-breathable > * + * {
+  .space-breathable>*+* {
     @apply mt-8;
   }
 
-  .space-breathable-sm > * + * {
+  .space-breathable-sm>*+* {
     @apply mt-4;
   }
 
-  .space-breathable-lg > * + * {
+  .space-breathable-lg>*+* {
     @apply mt-12;
   }
 
@@ -716,4 +660,123 @@
   border-style: solid;
   border-width: 4px 4px 4px 0;
   border-color: transparent #1a1a1a transparent transparent;
+}
+
+/* ==================================================
+   HOMEPAGE ANIMATIONS
+   ================================================== */
+
+/* Keyframe Animations */
+@keyframes float {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.15;
+  }
+
+  25% {
+    transform: translate3d(10px, -12px, 0);
+    opacity: 0.22;
+  }
+
+  50% {
+    transform: translate3d(-8px, -20px, 0);
+    opacity: 0.28;
+  }
+
+  75% {
+    transform: translate3d(-3px, -10px, 0);
+    opacity: 0.22;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.15;
+  }
+}
+
+
+@keyframes breathing {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation Classes */
+.animate-float {
+  animation: float 40s cubic-bezier(0.4, 0.0, 0.6, 1) infinite;
+}
+
+.animate-breathing {
+  animation: breathing 4s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-reveal {
+  animation: reveal 1s ease-out forwards;
+}
+
+/* Animation Delays */
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
+.animation-delay-800 {
+  animation-delay: 0.8s;
 }

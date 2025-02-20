@@ -287,10 +287,20 @@ export default function ResearcherMeetingRequests() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Meeting Requests</h1>
-        <p className="text-gray-600">
-          Manage meeting requests from patients interested in your research
+      {/* Page Header with Gradient */}
+      <div className="mb-8 p-6 md:p-8 rounded-3xl bg-gradient-to-br from-medical-teal-50 via-medical-indigo-50 to-medical-lavender-50 border border-medical-teal-100 shadow-lg animate-fade-in-up">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3"
+          style={{
+            background: 'linear-gradient(135deg, #14b8a6 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}
+        >
+          Meeting Requests
+        </h1>
+        <p className="text-lg text-gray-700">
+          📅 Manage meeting requests from patients interested in your research
         </p>
       </div>
 

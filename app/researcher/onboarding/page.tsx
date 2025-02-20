@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { X, Plus, Link2, Loader2 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { X, Plus, Link2, Loader2, ArrowRight, ArrowLeft, Microscope, Sparkles, MapPin, Check, Users } from 'lucide-react';
 
 export default function ResearcherOnboarding() {
+  const [currentStep, setCurrentStep] = useState(1);
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [specialtyInput, setSpecialtyInput] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
@@ -23,6 +23,7 @@ export default function ResearcherOnboarding() {
   const [loading, setLoading] = useState(false);
   const [importingPublications, setImportingPublications] = useState(false);
   const [publications, setPublications] = useState<any[]>([]);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
   const router = useRouter();
 
   // Suggested specialties
@@ -100,9 +101,38 @@ export default function ResearcherOnboarding() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const nextStep = () => {
+    if (currentStep < 5) {
+      setDirection('forward');
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setDirection('backward');
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const canProgress = () => {
+    switch (currentStep) {
+      case 1:
+        return true; // Welcome screen
+      case 2:
+        return specialties.length > 0;
+      case 3:
+        return true; // Interests are optional
+      case 4:
+        return city.trim() && country.trim();
+      case 5:
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  const handleSubmit = async () => {
     if (specialties.length === 0) {
       alert('Please add at least one specialty');
       return;
@@ -121,16 +151,17 @@ export default function ResearcherOnboarding() {
           researchGateUrl,
           acceptsMeetings,
           location: { city, country },
-          publications, // Save imported publications
+          publications,
         }),
       });
 
       if (response.ok) {
-        router.push('/researcher/dashboard');
+        setTimeout(() => {
+          router.push('/researcher/dashboard');
+        }, 2000);
       }
     } catch (error) {
       console.error('Onboarding error:', error);
-    } finally {
       setLoading(false);
     }
   };
