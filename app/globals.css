@@ -2,67 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Comforting Medical Design System */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Soft teal-purple gradient palette */
+    --background: 180 20% 99%;
+    --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 15% 15%;
 
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
+    /* Teal primary - calming & trustworthy */
+    --primary: 174 72% 56%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Soft purple secondary - empathetic */
+    --secondary: 270 60% 97%;
+    --secondary-foreground: 270 50% 40%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 180 20% 97%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 270 70% 96%;
+    --accent-foreground: 270 60% 45%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Soft destructive - not alarming */
+    --destructive: 0 70% 88%;
+    --destructive-foreground: 0 60% 40%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 180 15% 92%;
+    --input: 180 15% 94%;
+    --ring: 174 72% 56%;
 
-    --radius: 0.5rem;
+    /* Rounded, breathable */
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 20% 8%;
+    --foreground: 180 10% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 20% 10%;
+    --card-foreground: 180 10% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 180 10% 95%;
 
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 174 65% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 270 25% 15%;
+    --secondary-foreground: 270 30% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 180 10% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 270 30% 20%;
+    --accent-foreground: 270 30% 85%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 50% 30%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 174 65% 50%;
   }
 }
 
@@ -70,7 +76,219 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-to-br from-medical-soft-100 via-white to-medical-purple-50/30 text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Calm, modern typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.3;
+  }
+
+  h1 {
+    @apply text-4xl;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    @apply text-3xl;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    @apply text-2xl;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Micro-animations & Interactions */
+@layer components {
+  /* Card hover lift */
+  .card-lift {
+    @apply transition-all duration-300 ease-smooth;
+  }
+  
+  .card-lift:hover {
+    @apply -translate-y-1 shadow-soft-lg;
+  }
+
+  /* Smooth button interactions */
+  .btn-smooth {
+    @apply transition-all duration-200 ease-smooth;
+  }
+
+  .btn-smooth:hover {
+    @apply scale-105 shadow-soft;
+  }
+
+  .btn-smooth:active {
+    @apply scale-95;
+  }
+
+  /* Gradient backgrounds */
+  .gradient-teal-purple {
+    background: linear-gradient(135deg, #14b8a6 0%, #a855f7 100%);
+  }
+
+  .gradient-soft {
+    background: linear-gradient(135deg, #f0fdfc 0%, #faf5ff 100%);
+  }
+
+  /* Friendly loading skeleton */
+  .skeleton {
+    @apply bg-gradient-to-r from-medical-soft-200 via-medical-soft-100 to-medical-soft-200 bg-[length:200%_100%] animate-shimmer rounded-2xl;
+  }
+
+  .skeleton-text {
+    @apply h-4 skeleton rounded-full;
+  }
+
+  .skeleton-circle {
+    @apply skeleton rounded-full aspect-square;
+  }
+
+  /* Soft pulsing loader */
+  .pulse-loader {
+    @apply animate-pulse-soft;
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-soft;
+  }
+
+  /* Empathetic focus states */
+  .focus-soft:focus-visible {
+    @apply outline-none ring-2 ring-medical-teal-400/50 ring-offset-2;
+  }
+
+  /* Navigation transitions */
+  .nav-item {
+    @apply transition-all duration-300 ease-smooth;
+  }
+
+  .nav-item:hover {
+    @apply translate-x-1;
+  }
+
+  /* Icon curves - soft, empathetic */
+  svg, .icon {
+    @apply transition-transform duration-200 ease-smooth;
+  }
+
+  svg:hover, .icon:hover {
+    @apply scale-110;
+  }
+
+  /* Breathable containers */
+  .container-breathable {
+    @apply px-6 py-8 md:px-12 md:py-12;
+  }
+
+  /* Soft shadows for depth */
+  .shadow-comfort {
+    box-shadow: 
+      0 1px 3px rgba(20, 184, 166, 0.05),
+      0 4px 12px rgba(168, 85, 247, 0.05);
+  }
+
+  /* Interactive cards */
+  .card-interactive {
+    @apply rounded-2xl bg-white border border-medical-soft-300 shadow-soft transition-all duration-300 hover:shadow-soft-lg hover:-translate-y-1 hover:border-medical-teal-200;
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    @apply animate-fade-in-up;
+  }
+
+  /* Success states - calm green */
+  .success-soft {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl;
+  }
+
+  /* Info states - soft teal */
+  .info-soft {
+    @apply bg-medical-teal-50 text-medical-teal-700 border border-medical-teal-200 rounded-xl;
+  }
+
+  /* Warning states - warm amber */
+  .warning-soft {
+    @apply bg-amber-50 text-amber-700 border border-amber-200 rounded-xl;
+  }
+}
+
+/* Utility classes for breathable spacing */
+@layer utilities {
+  .space-breathable > * + * {
+    @apply mt-8;
+  }
+
+  .space-breathable-sm > * + * {
+    @apply mt-4;
+  }
+
+  .space-breathable-lg > * + * {
+    @apply mt-12;
+  }
+
+  /* Text gradient utilities */
+  .text-gradient-teal-purple {
+    @apply bg-gradient-to-r from-medical-teal-500 to-medical-purple-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-soft {
+    @apply bg-gradient-to-r from-medical-teal-600 to-medical-purple-600 bg-clip-text text-transparent;
+  }
+}
+
+/* Scrollbar styling - minimal & soft */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-medical-soft-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-medical-teal-300 rounded-full hover:bg-medical-teal-400;
+}
+
+/* Selection styling */
+::selection {
+  @apply bg-medical-teal-200 text-medical-teal-700;
+}
+
+::-moz-selection {
+  @apply bg-medical-teal-200 text-medical-teal-700;
+}
+
+/* Sidebar tooltip arrow */
+.tooltip-arrow {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 4px 4px 0;
+  border-color: transparent #1a1a1a transparent transparent;
 }
