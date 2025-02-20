@@ -38,6 +38,7 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/researcher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/researcher/collaborators', label: 'Collaborators', icon: Users },
     { href: '/researcher/clinical-trials', label: 'Clinical Trials', icon: FlaskConical },
+    { href: '/researcher/publications', label: 'Publications', icon: BookOpen },
     { href: '/researcher/meeting-requests', label: 'Meeting Requests', icon: CalendarCheck },
     { href: '/researcher/messages', label: 'Messages', icon: MessageSquare },
     { href: '/researcher/forums', label: 'Forums', icon: Mail },

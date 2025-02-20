@@ -351,7 +351,9 @@ function CollaboratorCard({ favorite, onRemove }: any) {
               {collaborator.location && (
                 <p className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
-                  {collaborator.location}
+                  {typeof collaborator.location === 'string' 
+                    ? collaborator.location 
+                    : `${collaborator.location.city || ''}, ${collaborator.location.country || ''}`.trim().replace(/^,\s*/, '')}
                 </p>
               )}
               {collaborator.email && (
