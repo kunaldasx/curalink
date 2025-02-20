@@ -15,6 +15,10 @@ export interface IUser extends Document {
   orcidId?: string;
   researchGateUrl?: string;
   acceptsMeetings?: boolean;
+  followingExperts?: mongoose.Types.ObjectId[];
+  followers?: mongoose.Types.ObjectId[];
+  bio?: string;
+  institution?: string;
   createdAt: Date;
 }
 
@@ -64,6 +68,24 @@ const UserSchema = new Schema<IUser>({
   acceptsMeetings: {
     type: Boolean,
     default: false,
+  },
+  followingExperts: {
+    type: [Schema.Types.ObjectId],
+    ref: 'User',
+    default: [],
+  },
+  followers: {
+    type: [Schema.Types.ObjectId],
+    ref: 'User',
+    default: [],
+  },
+  bio: {
+    type: String,
+    default: '',
+  },
+  institution: {
+    type: String,
+    default: '',
   },
   createdAt: {
     type: Date,

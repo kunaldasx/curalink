@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
     
-    if (!currentUser || currentUser.role !== 'researcher') {
+    if (!currentUser) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -28,20 +28,20 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Verify they are connected
-    const connection = await Connection.findOne({
-      $or: [
-        { requester: currentUser.id, recipient: otherUserId, status: 'accepted' },
-        { requester: otherUserId, recipient: currentUser.id, status: 'accepted' },
-      ],
-    });
+    // Optional: Verify they are connected (commenting out to allow meeting-based chats)
+    // const connection = await Connection.findOne({
+    //   $or: [
+    //     { requester: currentUser.id, recipient: otherUserId, status: 'accepted' },
+    //     { requester: otherUserId, recipient: currentUser.id, status: 'accepted' },
+    //   ],
+    // });
 
-    if (!connection) {
-      return NextResponse.json(
-        { error: 'You must be connected to chat' },
-        { status: 403 }
-      );
-    }
+    // if (!connection) {
+    //   return NextResponse.json(
+    //     { error: 'You must be connected to chat' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Get messages between users
     const messages = await Message.find({
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
     
-    if (!currentUser || currentUser.role !== 'researcher') {
+    if (!currentUser) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -88,29 +88,33 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
-    const { recipientId, content } = await req.json();
+    const body = await req.json();
+    // Support both parameter names for compatibility
+    const recipientId = body.recipientId || body.toUserId;
+    const content = body.content || body.message;
 
     if (!recipientId || !content) {
       return NextResponse.json(
-        { error: 'Recipient ID and content are required' },
+        { error: 'Recipient ID and content/message are required' },
         { status: 400 }
       );
     }
 
-    // Verify they are connected
-    const connection = await Connection.findOne({
-      $or: [
-        { requester: currentUser.id, recipient: recipientId, status: 'accepted' },
-        { requester: recipientId, recipient: currentUser.id, status: 'accepted' },
-      ],
-    });
+    // Optional: Verify they are connected (commenting out to allow meeting-based chats)
+    // This allows patients and researchers to chat after meeting acceptance
+    // const connection = await Connection.findOne({
+    //   $or: [
+    //     { requester: currentUser.id, recipient: recipientId, status: 'accepted' },
+    //     { requester: recipientId, recipient: currentUser.id, status: 'accepted' },
+    //   ],
+    // });
 
-    if (!connection) {
-      return NextResponse.json(
-        { error: 'You must be connected to send messages' },
-        { status: 403 }
-      );
-    }
+    // if (!connection) {
+    //   return NextResponse.json(
+    //     { error: 'You must be connected to send messages' },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Create message
     const message = await Message.create({

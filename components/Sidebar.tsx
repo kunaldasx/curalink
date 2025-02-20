@@ -11,6 +11,8 @@ import {
   MessageSquare,
   Heart,
   UserCog,
+  CalendarCheck,
+  Mail,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -24,8 +26,10 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/patient/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/patient/experts', label: 'Health Experts', icon: Users },
     { href: '/patient/clinical-trials', label: 'Clinical Trials', icon: FlaskConical },
+    { href: '/patient/meetings', label: 'My Meetings', icon: CalendarCheck },
+    { href: '/patient/messages', label: 'Messages', icon: MessageSquare },
     { href: '/patient/publications', label: 'Publications', icon: BookOpen },
-    { href: '/patient/forums', label: 'Forums', icon: MessageSquare },
+    { href: '/patient/forums', label: 'Forums', icon: Mail },
     { href: '/patient/favorites', label: 'Favorites', icon: Heart },
     { href: '/patient/profile', label: 'My Profile', icon: UserCog },
   ];
@@ -34,7 +38,9 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/researcher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/researcher/collaborators', label: 'Collaborators', icon: Users },
     { href: '/researcher/clinical-trials', label: 'Clinical Trials', icon: FlaskConical },
-    { href: '/researcher/forums', label: 'Forums', icon: MessageSquare },
+    { href: '/researcher/meeting-requests', label: 'Meeting Requests', icon: CalendarCheck },
+    { href: '/researcher/messages', label: 'Messages', icon: MessageSquare },
+    { href: '/researcher/forums', label: 'Forums', icon: Mail },
     { href: '/researcher/favorites', label: 'Favorites', icon: Heart },
     { href: '/researcher/profile', label: 'My Profile', icon: UserCog },
   ];

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, Heart, Mail, MapPin, Globe, RefreshCw, Users } from 'lucide-react';
+import { Search, Heart, Mail, MapPin, Globe, RefreshCw, Users, UserPlus, CheckCircle2, BookOpen, Loader2, ExternalLink, UserCheck } from 'lucide-react';
 
 export default function PatientExperts() {
   const [query, setQuery] = useState('');
@@ -20,6 +20,18 @@ export default function PatientExperts() {
   const [nearbyOnly, setNearbyOnly] = useState(true);
   const [isPersonalized, setIsPersonalized] = useState(true);
   const [userLocation, setUserLocation] = useState<any>(null);
+  const [followedExperts, setFollowedExperts] = useState<Set<string>>(new Set());
+  
+  // Meeting request dialog state
+  const [meetingDialogOpen, setMeetingDialogOpen] = useState(false);
+  const [patientName, setPatientName] = useState('');
+  const [patientContact, setPatientContact] = useState('');
+  const [meetingMessage, setMeetingMessage] = useState('');
+  const [sendingRequest, setSendingRequest] = useState(false);
+  
+  // Nudge dialog state
+  const [nudgeDialogOpen, setNudgeDialogOpen] = useState(false);
+  const [nudgeExpert, setNudgeExpert] = useState<any>(null);
 
   useEffect(() => {
     loadPersonalizedExperts();
@@ -78,28 +90,124 @@ export default function PatientExperts() {
     loadPersonalizedExperts();
   };
 
-  const handleFavorite = async (expertId: string) => {
-    await fetch('/api/favorites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refType: 'expert', refId: expertId }),
-    });
+  const handleFollow = async (expertId: string) => {
+    try {
+      const response = await fetch('/api/experts/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ expertId }),
+      });
+      
+      if (response.ok) {
+        setFollowedExperts(prev => new Set(prev).add(expertId));
+        alert('Successfully followed expert!');
+      }
+    } catch (error) {
+      console.error('Follow error:', error);
+    }
+  };
+  
+  const handleUnfollow = async (expertId: string) => {
+    try {
+      const response = await fetch('/api/experts/follow', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ expertId }),
+      });
+      
+      if (response.ok) {
+        setFollowedExperts(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(expertId);
+          return newSet;
+        });
+        alert('Unfollowed expert');
+      }
+    } catch (error) {
+      console.error('Unfollow error:', error);
+    }
   };
 
+  const openMeetingDialog = (expert: any) => {
+    setSelectedExpert(expert);
+    setMeetingMessage(
+      `Dear Dr. ${expert.name},\n\n` +
+      `I am a patient interested in your research on ${expert.specialties?.[0] || 'your field'}. ` +
+      `I would like to request a meeting to discuss potential participation in research or consultation.\n\n` +
+      `Thank you for your consideration.`
+    );
+    setMeetingDialogOpen(true);
+  };
+  
   const handleMeetingRequest = async () => {
-    if (!selectedExpert) return;
+    if (!selectedExpert || !patientName || !patientContact || !meetingMessage) {
+      alert('Please fill in all required fields');
+      return;
+    }
 
-    await fetch('/api/meeting-requests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        toResearcherId: selectedExpert._id,
-        message,
-      }),
-    });
+    setSendingRequest(true);
+    try {
+      const response = await fetch('/api/experts/meeting-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          expertId: selectedExpert._id || selectedExpert.id,
+          expertName: selectedExpert.name,
+          isOnPlatform: selectedExpert.isOnPlatform,
+          patientName,
+          patientContact,
+          message: meetingMessage,
+        }),
+      });
 
-    setMessage('');
-    setSelectedExpert(null);
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert(data.message || 'Meeting request sent successfully!');
+        setMeetingDialogOpen(false);
+        setPatientName('');
+        setPatientContact('');
+        setMeetingMessage('');
+        setSelectedExpert(null);
+      } else {
+        alert(data.error || 'Failed to send meeting request');
+      }
+    } catch (error) {
+      console.error('Meeting request error:', error);
+      alert('Failed to send meeting request');
+    } finally {
+      setSendingRequest(false);
+    }
+  };
+  
+  const openNudgeDialog = (expert: any) => {
+    setNudgeExpert(expert);
+    setNudgeDialogOpen(true);
+  };
+  
+  const handleNudge = async () => {
+    if (!nudgeExpert) return;
+    
+    try {
+      const response = await fetch('/api/experts/nudge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          expertName: nudgeExpert.name,
+          expertEmail: nudgeExpert.email,
+        }),
+      });
+      
+      if (response.ok) {
+        alert('Invitation sent to expert!');
+        setNudgeDialogOpen(false);
+      } else {
+        alert('Failed to send invitation');
+      }
+    } catch (error) {
+      console.error('Nudge error:', error);
+      alert('Failed to send invitation');
+    }
   };
 
   return (
@@ -163,14 +271,18 @@ export default function PatientExperts() {
         <CardContent className="pt-6">
           <div className="flex gap-4">
             <div className="flex-1">
-              <Label htmlFor="query">Search by specialty or interest</Label>
+              <Label htmlFor="query">Search by condition, specialty, or research area</Label>
               <Input
                 id="query"
-                placeholder="e.g., oncology, cardiology, immunology"
+                placeholder="e.g., Glioma, Breast Cancer, Immunotherapy, Cardiology"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="text-base"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Search for experts by medical condition or research specialty
+              </p>
             </div>
             <div className="flex items-end gap-2">
               <Button onClick={handleSearch} disabled={loading}>
@@ -223,77 +335,230 @@ export default function PatientExperts() {
         )}
 
         {experts.map((expert, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <CardTitle>{expert.name}</CardTitle>
+          <Card key={i} className="relative">
+            {/* Platform Status Badge */}
+            <div className="absolute top-4 right-4">
+              {expert.isOnPlatform ? (
+                <Badge variant="default" className="bg-green-600">
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  On Platform
+                </Badge>
+              ) : (
+                <Badge variant="secondary">
+                  <ExternalLink className="mr-1 h-3 w-3" />
+                  External
+                </Badge>
+              )}
+            </div>
+            
+            <CardHeader className="pr-32">
+              <CardTitle className="flex items-center gap-2">
+                {expert.name}
+                {expert.publicationCount > 0 && (
+                  <Badge variant="outline" className="text-xs font-normal">
+                    <BookOpen className="mr-1 h-3 w-3" />
+                    {expert.publicationCount} publications
+                  </Badge>
+                )}
+              </CardTitle>
               <CardDescription>
                 {expert.specialties?.join(', ') || 'Researcher'}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
+              {/* Research Interests */}
               {expert.interests && expert.interests.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-sm font-medium mb-1">Research Interests:</p>
+                <div>
+                  <p className="text-sm font-medium mb-2">Research Interests:</p>
                   <div className="flex flex-wrap gap-1">
-                    {expert.interests.slice(0, 3).map((interest: string, j: number) => (
-                      <span key={j} className="text-xs px-2 py-1 bg-gray-100 rounded">
+                    {expert.interests.slice(0, 5).map((interest: string, j: number) => (
+                      <Badge key={j} variant="outline" className="text-xs">
                         {interest}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 </div>
               )}
+              
+              {/* Location */}
               {expert.location && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
                   {expert.location.city}, {expert.location.country}
                 </p>
               )}
+              
+              {/* Institution */}
+              {expert.institution && (
+                <p className="text-sm text-muted-foreground">
+                  {expert.institution}
+                </p>
+              )}
+              
+              {/* Brief Bio */}
+              {expert.bio && (
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {expert.bio}
+                </p>
+              )}
             </CardContent>
-            <CardFooter className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleFavorite(expert._id)}
-              >
-                <Heart className="mr-2 h-4 w-4" />
-                Follow
-              </Button>
-              {expert.acceptsMeetings && (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="sm" onClick={() => setSelectedExpert(expert)}>
-                      <Mail className="mr-2 h-4 w-4" />
-                      Request Meeting
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Request Meeting with {expert.name}</DialogTitle>
-                      <DialogDescription>
-                        Send a meeting request to this researcher
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="message">Message</Label>
-                        <Textarea
-                          id="message"
-                          placeholder="Introduce yourself and explain why you'd like to meet..."
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          rows={4}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button onClick={handleMeetingRequest}>Send Request</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+            <CardFooter className="flex flex-wrap gap-2">
+              {/* Follow/Unfollow Button */}
+              {followedExperts.has(expert._id) ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleUnfollow(expert._id)}
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Following
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleFollow(expert._id)}
+                >
+                  <Heart className="mr-2 h-4 w-4" />
+                  Follow
+                </Button>
+              )}
+              
+              {/* Meeting Request Button */}
+              {expert.isOnPlatform ? (
+                <Button
+                  size="sm"
+                  onClick={() => openMeetingDialog(expert)}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  Request Meeting
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => openMeetingDialog(expert)}
+                  >
+                    <Mail className="mr-2 h-4 w-4" />
+                    Request via Admin
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => openNudgeDialog(expert)}
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Invite to Platform
+                  </Button>
+                </>
               )}
             </CardFooter>
           </Card>
         ))}
+        
+        {/* Meeting Request Dialog */}
+        <Dialog open={meetingDialogOpen} onOpenChange={setMeetingDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                Request Meeting with {selectedExpert?.name}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedExpert?.isOnPlatform
+                  ? 'Send a meeting request directly to this researcher'
+                  : 'This request will be sent to our admin team who will contact the researcher on your behalf'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="patientName">Your Name *</Label>
+                  <Input
+                    id="patientName"
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="patientContact">Contact (Email/Phone) *</Label>
+                  <Input
+                    id="patientContact"
+                    value={patientContact}
+                    onChange={(e) => setPatientContact(e.target.value)}
+                    placeholder="john@email.com or +1234567890"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="meetingMessage">Message *</Label>
+                <Textarea
+                  id="meetingMessage"
+                  value={meetingMessage}
+                  onChange={(e) => setMeetingMessage(e.target.value)}
+                  rows={8}
+                  placeholder="Introduce yourself and explain why you'd like to meet..."
+                  required
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setMeetingDialogOpen(false)}
+                disabled={sendingRequest}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleMeetingRequest}
+                disabled={sendingRequest || !patientName || !patientContact || !meetingMessage}
+              >
+                {sendingRequest ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="mr-2 h-4 w-4" />
+                    Send Request
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
+        {/* Nudge Dialog */}
+        <Dialog open={nudgeDialogOpen} onOpenChange={setNudgeDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Invite {nudgeExpert?.name} to CuraLink</DialogTitle>
+              <DialogDescription>
+                Send an invitation to this expert to join the platform
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                We'll send an invitation email highlighting the benefits of joining CuraLink 
+                and connecting with patients interested in their research.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setNudgeDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleNudge}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Send Invitation
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

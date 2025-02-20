@@ -29,17 +29,31 @@ export async function POST(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
     
-    if (!currentUser) {
+    if (!currentUser || currentUser.role !== 'researcher') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const { title, phase, status, condition, location, contactEmail, description } = await req.json();
+    const { 
+      title, 
+      phase, 
+      status, 
+      condition, 
+      location, 
+      contactEmail, 
+      description,
+      eligibility,
+      targetParticipants,
+      currentParticipants,
+      startDate,
+      endDate
+    } = await req.json();
 
-    // Generate AI summary
-    const summary = await generateSummary(title, description || '', 'trial');
+    // Generate AI summary from title and description
+    const summaryText = `${title}. ${description || ''}`.substring(0, 500);
+    const summary = await generateSummary(summaryText, condition, 'trial');
 
     await dbConnect();
 
@@ -50,6 +64,12 @@ export async function POST(req: NextRequest) {
       condition,
       location,
       contactEmail,
+      description,
+      eligibility,
+      targetParticipants: targetParticipants || 0,
+      currentParticipants: currentParticipants || 0,
+      startDate: startDate ? new Date(startDate) : undefined,
+      endDate: endDate ? new Date(endDate) : undefined,
       summary,
       ownerResearcherId: currentUser.id,
     });

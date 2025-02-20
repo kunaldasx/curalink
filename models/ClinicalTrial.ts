@@ -8,9 +8,16 @@ export interface IClinicalTrial extends Document {
   condition: string;
   location: string;
   summary: string;
+  description: string;
+  eligibility: string;
   contactEmail: string;
   ownerResearcherId?: mongoose.Types.ObjectId;
+  targetParticipants?: number;
+  currentParticipants?: number;
+  startDate?: Date;
+  endDate?: Date;
   updatedAt: Date;
+  createdAt: Date;
 }
 
 const ClinicalTrialSchema = new Schema<IClinicalTrial>({
@@ -42,6 +49,14 @@ const ClinicalTrialSchema = new Schema<IClinicalTrial>({
     type: String,
     default: '',
   },
+  description: {
+    type: String,
+    default: '',
+  },
+  eligibility: {
+    type: String,
+    default: '',
+  },
   contactEmail: {
     type: String,
     default: '',
@@ -50,10 +65,22 @@ const ClinicalTrialSchema = new Schema<IClinicalTrial>({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+  targetParticipants: {
+    type: Number,
+    default: 0,
   },
+  currentParticipants: {
+    type: Number,
+    default: 0,
+  },
+  startDate: {
+    type: Date,
+  },
+  endDate: {
+    type: Date,
+  },
+}, {
+  timestamps: true,
 });
 
 const ClinicalTrial: Model<IClinicalTrial> = 
