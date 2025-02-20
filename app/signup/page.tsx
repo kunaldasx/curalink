@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,12 +42,26 @@ export default function SignupPage() {
         return;
       }
 
-      // Redirect to onboarding
+      // Auto sign in the user after successful signup
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        setError('Account created but login failed. Please log in manually.');
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to onboarding after successful signin
       if (role === 'patient') {
         router.push('/patient/onboarding');
       } else {
         router.push('/researcher/onboarding');
       }
+      router.refresh(); // Force refresh to update session
     } catch (err) {
       setError('An error occurred. Please try again.');
       setLoading(false);

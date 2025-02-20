@@ -27,6 +27,7 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/patient/publications', label: 'Publications', icon: BookOpen },
     { href: '/patient/forums', label: 'Forums', icon: MessageSquare },
     { href: '/patient/favorites', label: 'Favorites', icon: Heart },
+    { href: '/patient/profile', label: 'My Profile', icon: UserCog },
   ];
 
   const researcherLinks = [
@@ -35,6 +36,7 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/researcher/clinical-trials', label: 'Clinical Trials', icon: FlaskConical },
     { href: '/researcher/forums', label: 'Forums', icon: MessageSquare },
     { href: '/researcher/favorites', label: 'Favorites', icon: Heart },
+    { href: '/researcher/profile', label: 'My Profile', icon: UserCog },
   ];
 
   const links = role === 'patient' ? patientLinks : researcherLinks;

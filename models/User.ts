@@ -13,6 +13,7 @@ export interface IUser extends Document {
   specialties?: string[];
   interests?: string[];
   orcidId?: string;
+  researchGateUrl?: string;
   acceptsMeetings?: boolean;
   createdAt: Date;
 }
@@ -53,6 +54,10 @@ const UserSchema = new Schema<IUser>({
     default: [],
   },
   orcidId: {
+    type: String,
+    default: '',
+  },
+  researchGateUrl: {
     type: String,
     default: '',
   },

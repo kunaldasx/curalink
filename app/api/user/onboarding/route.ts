@@ -28,19 +28,24 @@ export async function POST(req: NextRequest) {
 
     // Update based on role
     if (user.role === 'patient') {
-      const { conditions, location } = body;
+      const { conditions, additionalConditions, location } = body;
       
-      // Extract keywords using AI
-      const keywords = conditions ? await extractDiseaseKeywords(conditions) : [];
+      // Extract keywords from natural language using AI
+      const keywords = await extractDiseaseKeywords(conditions);
       
-      user.medicalConditions = keywords;
+      // Combine AI-extracted keywords with manually added conditions
+      const combined = [...keywords, ...(additionalConditions || [])];
+      const allConditions = Array.from(new Set(combined)); // Remove duplicates
+      
+      user.medicalConditions = allConditions;
       user.location = location;
     } else if (user.role === 'researcher') {
-      const { specialties, interests, orcidId, acceptsMeetings, location } = body;
+      const { specialties, interests, orcidId, researchGateUrl, acceptsMeetings, location } = body;
       
       user.specialties = specialties || [];
       user.interests = interests || [];
       user.orcidId = orcidId || '';
+      user.researchGateUrl = researchGateUrl || '';
       user.acceptsMeetings = acceptsMeetings !== undefined ? acceptsMeetings : false;
       user.location = location;
     }

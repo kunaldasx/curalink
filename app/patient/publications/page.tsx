@@ -1,21 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Search, Heart, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Search, Heart, ExternalLink, RefreshCw, BookOpen } from 'lucide-react';
 
 export default function PatientPublications() {
   const [query, setQuery] = useState('');
   const [publications, setPublications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [userConditions, setUserConditions] = useState<string[]>([]);
+  const [isPersonalized, setIsPersonalized] = useState(true);
+
+  useEffect(() => {
+    loadPersonalizedPublications();
+  }, []);
+
+  const loadPersonalizedPublications = async () => {
+    setLoading(true);
+    setIsPersonalized(true);
+    try {
+      const res = await fetch('/api/recommendations');
+      const data = await res.json();
+      setPublications(data.publications || []);
+      setUserConditions(data.userConditions || []);
+    } catch (error) {
+      console.error('Load error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = async () => {
     if (!query) return;
     
     setLoading(true);
+    setIsPersonalized(false);
     try {
       const res = await fetch(`/api/publications/search?query=${encodeURIComponent(query)}`);
       const data = await res.json();
@@ -25,6 +48,11 @@ export default function PatientPublications() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetToPersonalized = () => {
+    setQuery('');
+    loadPersonalizedPublications();
   };
 
   const handleFavorite = async (pubId: string) => {
@@ -39,9 +67,32 @@ export default function PatientPublications() {
     <div className="max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Publications</h1>
-        <p className="text-gray-600">Search for research articles and medical publications</p>
+        <p className="text-gray-600">
+          {isPersonalized
+            ? 'Research articles relevant to your conditions'
+            : 'Search results for publications'}
+        </p>
       </div>
 
+      {/* User Conditions */}
+      {userConditions.length > 0 && (
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex-1">
+              <p className="text-sm font-medium mb-2">🔍 Your conditions:</p>
+              <div className="flex flex-wrap gap-2">
+                {userConditions.map((condition, i) => (
+                  <Badge key={i} variant="secondary" className="bg-blue-100 text-blue-700">
+                    {condition}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Search Card */}
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="flex gap-4">
@@ -55,22 +106,44 @@ export default function PatientPublications() {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            <div className="flex items-end">
+            <div className="flex items-end gap-2">
               <Button onClick={handleSearch} disabled={loading || !query}>
                 <Search className="mr-2 h-4 w-4" />
                 Search
               </Button>
+              {!isPersonalized && (
+                <Button
+                  variant="outline"
+                  onClick={resetToPersonalized}
+                  disabled={loading}
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Reset
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
       </Card>
 
+      {/* Results Header */}
+      {publications.length > 0 && (
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {publications.length} publication{publications.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+      )}
+
       <div className="space-y-4">
         {publications.length === 0 && !loading && (
           <Card>
-            <CardContent className="pt-6">
-              <p className="text-center text-muted-foreground">
-                Enter a search term to find relevant publications
+            <CardContent className="pt-6 text-center py-8">
+              <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-muted-foreground mb-2">
+                {isPersonalized
+                  ? 'No publications found for your conditions'
+                  : 'Enter a search term to find relevant publications'}
               </p>
             </CardContent>
           </Card>

@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import ClinicalTrial from '@/models/ClinicalTrial';
 import Publication from '@/models/Publication';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
     
@@ -27,36 +27,65 @@ export async function GET() {
       });
     }
 
-    const conditions = user.medicalConditions || [];
+    const searchParams = req.nextUrl.searchParams;
+    const nearbyOnly = searchParams.get('nearbyOnly') === 'true';
 
-    // Find matching trials
-    const trials = await ClinicalTrial.find({
+    const conditions = user.medicalConditions || [];
+    const userLocation = user.location;
+
+    // Build trial query
+    const trialQuery: any = {
       $or: [
         { condition: { $in: conditions } },
         { title: { $regex: conditions.join('|'), $options: 'i' } },
       ],
-    }).limit(10);
+    };
 
-    // Find experts with matching specialties
-    const experts = await User.find({
+    // Add location filter for trials if nearbyOnly
+    if (nearbyOnly && userLocation?.country) {
+      trialQuery.location = { $regex: userLocation.country, $options: 'i' };
+    }
+
+    // Find matching trials
+    const trials = await ClinicalTrial.find(trialQuery)
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    // Build expert query
+    const expertQuery: any = {
       role: 'researcher',
       $or: [
         { specialties: { $in: conditions } },
         { interests: { $in: conditions } },
       ],
-    }).limit(10);
+    };
 
-    // Find matching publications
+    // Add location filter for experts if nearbyOnly
+    if (nearbyOnly && userLocation?.country) {
+      expertQuery['location.country'] = { $regex: userLocation.country, $options: 'i' };
+    }
+
+    // Find experts with matching specialties
+    const experts = await User.find(expertQuery)
+      .select('-passwordHash')
+      .limit(20);
+
+    // Find matching publications (no location filter)
     const publications = await Publication.find({
       $or: [
         { title: { $regex: conditions.join('|'), $options: 'i' } },
       ],
-    }).limit(10);
+    })
+      .sort({ createdAt: -1 })
+      .limit(20);
 
     return NextResponse.json({
       trials,
       experts,
       publications,
+      userConditions: conditions,
+      userLocation,
+      nearbyOnly,
     });
   } catch (error) {
     console.error('Recommendations error:', error);

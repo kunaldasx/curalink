@@ -8,6 +8,13 @@ import { Activity, LogOut } from 'lucide-react';
 export default function Navbar() {
   const { data: session } = useSession();
 
+  const handleSignOut = async () => {
+    await signOut({ 
+      callbackUrl: '/',
+      redirect: true 
+    });
+  };
+
   return (
     <nav className="border-b bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -25,7 +32,7 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => signOut({ callbackUrl: '/' })}
+                onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign Out
