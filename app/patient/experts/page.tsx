@@ -20,7 +20,7 @@ export default function PatientExperts() {
   const [nearbyOnly, setNearbyOnly] = useState(true);
   const [isPersonalized, setIsPersonalized] = useState(true);
   const [userLocation, setUserLocation] = useState<any>(null);
-  const [followedExperts, setFollowedExperts] = useState<Set<string>>(new Set());
+  const [favoritedExperts, setFavoritedExperts] = useState<Set<string>>(new Set());
   
   // Meeting request dialog state
   const [meetingDialogOpen, setMeetingDialogOpen] = useState(false);
@@ -35,6 +35,7 @@ export default function PatientExperts() {
 
   useEffect(() => {
     loadPersonalizedExperts();
+    loadFavorites();
   }, []);
 
   const loadPersonalizedExperts = async () => {
@@ -90,41 +91,47 @@ export default function PatientExperts() {
     loadPersonalizedExperts();
   };
 
-  const handleFollow = async (expertId: string) => {
+  const loadFavorites = async () => {
     try {
-      const response = await fetch('/api/experts/follow', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ expertId }),
-      });
-      
-      if (response.ok) {
-        setFollowedExperts(prev => new Set(prev).add(expertId));
-        alert('Successfully followed expert!');
-      }
+      const res = await fetch('/api/favorites?type=expert');
+      const data = await res.json();
+      const expertIds = new Set(data.favorites.map((f: any) => f.refId));
+      setFavoritedExperts(expertIds);
     } catch (error) {
-      console.error('Follow error:', error);
+      console.error('Load favorites error:', error);
     }
   };
-  
-  const handleUnfollow = async (expertId: string) => {
+
+  const handleToggleFavorite = async (expertId: string, expertName: string) => {
     try {
-      const response = await fetch('/api/experts/follow', {
-        method: 'DELETE',
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ expertId }),
+        body: JSON.stringify({ 
+          refType: 'expert', 
+          refId: expertId,
+          metadata: { name: expertName }
+        }),
       });
       
+      const data = await response.json();
+      
       if (response.ok) {
-        setFollowedExperts(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(expertId);
-          return newSet;
-        });
-        alert('Unfollowed expert');
+        if (data.isFavorite) {
+          setFavoritedExperts(prev => new Set(prev).add(expertId));
+          alert('Added to favorites!');
+        } else {
+          setFavoritedExperts(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(expertId);
+            return newSet;
+          });
+          alert('Removed from favorites');
+        }
       }
     } catch (error) {
-      console.error('Unfollow error:', error);
+      console.error('Toggle favorite error:', error);
+      alert('Failed to update favorites');
     }
   };
 
@@ -403,26 +410,16 @@ export default function PatientExperts() {
               )}
             </CardContent>
             <CardFooter className="flex flex-wrap gap-2">
-              {/* Follow/Unfollow Button */}
-              {followedExperts.has(expert._id) ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleUnfollow(expert._id)}
-                >
-                  <UserCheck className="mr-2 h-4 w-4" />
-                  Following
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleFollow(expert._id)}
-                >
-                  <Heart className="mr-2 h-4 w-4" />
-                  Follow
-                </Button>
-              )}
+              {/* Favorite Button */}
+              <Button
+                variant={favoritedExperts.has(expert._id) ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleToggleFavorite(expert._id, expert.name)}
+                className={favoritedExperts.has(expert._id) ? "bg-red-600 hover:bg-red-700" : ""}
+              >
+                <Heart className={`mr-2 h-4 w-4 ${favoritedExperts.has(expert._id) ? 'fill-white' : ''}`} />
+                {favoritedExperts.has(expert._id) ? 'Saved' : 'Add to Favorites'}
+              </Button>
               
               {/* Meeting Request Button */}
               {expert.isOnPlatform ? (

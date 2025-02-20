@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Search, UserPlus, Check, X, MessageCircle, Send, BookOpen, MapPin, Loader2, UserMinus } from 'lucide-react';
+import { Search, UserPlus, Check, X, MessageCircle, Send, BookOpen, MapPin, Loader2, UserMinus, Bookmark } from 'lucide-react';
 
 type TabType = 'search' | 'connections' | 'pending';
 
@@ -27,6 +27,7 @@ export default function ResearcherCollaborators() {
   const [newMessage, setNewMessage] = useState('');
   const [sendingMessage, setSendingMessage] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [savedCollaborators, setSavedCollaborators] = useState<Set<string>>(new Set());
 
   // Debug: Log connections state changes
   useEffect(() => {
@@ -71,7 +72,49 @@ export default function ResearcherCollaborators() {
     setActionLoading(null);
     handleSearch();
     fetchConnections();
+    loadSavedCollaborators();
   }, []);
+
+  const loadSavedCollaborators = async () => {
+    try {
+      const res = await fetch('/api/favorites?type=collaborator');
+      const data = await res.json();
+      const collabIds = new Set(data.favorites.map((f: any) => f.refId));
+      setSavedCollaborators(collabIds);
+    } catch (error) {
+      console.error('Load saved collaborators error:', error);
+    }
+  };
+
+  const handleToggleSave = async (collaboratorId: string, collaboratorName: string) => {
+    try {
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          refType: 'collaborator', 
+          refId: collaboratorId,
+          metadata: { name: collaboratorName }
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (data.isFavorite) {
+          setSavedCollaborators(prev => new Set(prev).add(collaboratorId));
+        } else {
+          setSavedCollaborators(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(collaboratorId);
+            return newSet;
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Toggle save error:', error);
+    }
+  };
 
   // Update on tab change
   useEffect(() => {
@@ -232,7 +275,18 @@ export default function ResearcherCollaborators() {
               </p>
             )}
           </div>
-          {renderConnectionButton(collab)}
+          <div className="flex gap-2 items-start">
+            <Button
+              variant={savedCollaborators.has(collab._id) ? "default" : "ghost"}
+              size="icon"
+              onClick={() => handleToggleSave(collab._id, collab.name)}
+              title={savedCollaborators.has(collab._id) ? "Remove from library" : "Save to library"}
+              className={savedCollaborators.has(collab._id) ? "bg-purple-600 hover:bg-purple-700" : ""}
+            >
+              <Bookmark className={`h-4 w-4 ${savedCollaborators.has(collab._id) ? 'fill-white' : ''}`} />
+            </Button>
+            {renderConnectionButton(collab)}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -22,6 +22,7 @@ export default function PatientClinicalTrials() {
   const [isPersonalized, setIsPersonalized] = useState(true);
   const [userLocation, setUserLocation] = useState<any>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [favoritedTrials, setFavoritedTrials] = useState<Set<string>>(new Set());
   
   // Email dialog state
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
@@ -32,6 +33,7 @@ export default function PatientClinicalTrials() {
 
   useEffect(() => {
     loadPersonalizedTrials();
+    loadFavorites();
   }, []);
 
   const loadPersonalizedTrials = async () => {
@@ -154,12 +156,45 @@ export default function PatientClinicalTrials() {
 
   const activeFiltersCount = [status, phase, location].filter(Boolean).length;
 
-  const handleFavorite = async (trialId: string) => {
-    await fetch('/api/favorites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refType: 'trial', refId: trialId }),
-    });
+  const loadFavorites = async () => {
+    try {
+      const res = await fetch('/api/favorites?type=trial');
+      const data = await res.json();
+      const trialIds = new Set(data.favorites.map((f: any) => f.refId));
+      setFavoritedTrials(trialIds);
+    } catch (error) {
+      console.error('Load favorites error:', error);
+    }
+  };
+
+  const handleToggleFavorite = async (trialId: string, trialTitle: string) => {
+    try {
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          refType: 'trial', 
+          refId: trialId,
+          metadata: { title: trialTitle }
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        if (data.isFavorite) {
+          setFavoritedTrials(prev => new Set(prev).add(trialId));
+        } else {
+          setFavoritedTrials(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(trialId);
+            return newSet;
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Toggle favorite error:', error);
+    }
   };
 
   return (
@@ -367,7 +402,11 @@ export default function PatientClinicalTrials() {
           </Card>
         )}
 
-        {trials.map((trial, i) => (
+        {trials.map((trial, i) => {
+          const trialId = trial._id || trial.nctId;
+          const isFavorited = favoritedTrials.has(trialId);
+
+          return (
           <Card key={i}>
             <CardHeader>
               <div className="flex justify-between items-start gap-4">
@@ -384,12 +423,13 @@ export default function PatientClinicalTrials() {
                   </CardDescription>
                 </div>
                 <Button
-                  variant="ghost"
+                  variant={isFavorited ? "default" : "ghost"}
                   size="icon"
-                  onClick={() => handleFavorite(trial._id || trial.nctId)}
-                  title="Add to favorites"
+                  onClick={() => handleToggleFavorite(trialId, trial.title)}
+                  title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+                  className={isFavorited ? "bg-red-600 hover:bg-red-700" : ""}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className={`h-5 w-5 ${isFavorited ? 'fill-white' : ''}`} />
                 </Button>
               </div>
             </CardHeader>
@@ -455,7 +495,8 @@ export default function PatientClinicalTrials() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
 
         {/* Email Dialog */}
         <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>

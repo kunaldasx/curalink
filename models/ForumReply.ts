@@ -1,19 +1,25 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IForumReply extends Document {
-  threadId: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId;
+  topicId: mongoose.Types.ObjectId;
+  authorId: mongoose.Types.ObjectId;
   content: string;
+  isVerified: boolean; // Researcher-provided answer
+  isHidden: boolean;
+  isFlagged: boolean;
+  flagReason?: string;
+  editedAt?: Date;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 const ForumReplySchema = new Schema<IForumReply>({
-  threadId: {
+  topicId: {
     type: Schema.Types.ObjectId,
-    ref: 'ForumThread',
+    ref: 'ForumTopic',
     required: true,
   },
-  userId: {
+  authorId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -21,14 +27,33 @@ const ForumReplySchema = new Schema<IForumReply>({
   content: {
     type: String,
     required: true,
+    maxlength: 10000,
   },
-  createdAt: {
+  isVerified: {
+    type: Boolean,
+    default: true, // All replies from researchers are verified
+  },
+  isHidden: {
+    type: Boolean,
+    default: false,
+  },
+  isFlagged: {
+    type: Boolean,
+    default: false,
+  },
+  flagReason: {
+    type: String,
+  },
+  editedAt: {
     type: Date,
-    default: Date.now,
   },
+}, {
+  timestamps: true,
 });
 
-const ForumReply: Model<IForumReply> = 
-  mongoose.models.ForumReply || mongoose.model<IForumReply>('ForumReply', ForumReplySchema);
+// Indexes for performance
+ForumReplySchema.index({ topicId: 1, createdAt: 1 });
+ForumReplySchema.index({ authorId: 1 });
+ForumReplySchema.index({ isHidden: 1 });
 
-export default ForumReply;
+export default mongoose.models.ForumReply || mongoose.model<IForumReply>('ForumReply', ForumReplySchema);
