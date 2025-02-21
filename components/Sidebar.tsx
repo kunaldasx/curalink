@@ -19,6 +19,7 @@ import {
 	ChevronRight,
 	Menu,
 	Sparkles,
+	Bot,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -80,6 +81,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "AI Assistant",
 			icon: Sparkles,
 		},
+		{ href: "/chat", label: "AI Chat", icon: Bot },
 		{ href: "/patient/experts", label: "Health Experts", icon: Users },
 		{
 			href: "/patient/clinical-trials",
@@ -108,6 +110,12 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "Dashboard",
 			icon: LayoutDashboard,
 		},
+		{
+			href: "/researcher/ai-assistant",
+			label: "AI Assistant",
+			icon: Sparkles,
+		},
+		{ href: "/chat", label: "AI Chat", icon: Bot },
 		{
 			href: "/researcher/collaborators",
 			label: "Collaborators",
@@ -264,7 +272,11 @@ export default function Sidebar({ role }: SidebarProps) {
 										? "justify-center"
 										: "justify-start",
 									!isActive &&
-										"text-gray-600 hover:text-medical-teal-600"
+										"text-gray-600 hover:text-medical-teal-600",
+
+									// ✅ Special styling ONLY for AI Assistant link
+									link.label === "AI Assistant" &&
+										"bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 text-white hover:text-white hover:from-medical-teal-600 hover:to-medical-indigo-600"
 								)}
 								title={
 									isCollapsed && !isMobile

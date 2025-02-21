@@ -1,98 +1,118 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { searchClinicalTrials } from '@/utils/clinicalTrials';
-import { generateSummary } from '@/utils/ai';
-import dbConnect from '@/lib/mongodb';
-import ClinicalTrial from '@/models/ClinicalTrial';
+import { NextRequest, NextResponse } from "next/server";
+import { searchClinicalTrials } from "@/utils/clinicalTrials";
+import { generateSummary } from "@/utils/ai";
+import dbConnect from "@/lib/mongodb";
+import ClinicalTrial from "@/models/ClinicalTrial";
+
+interface ITrial {
+	_id: string | { toString(): string };
+	title: string;
+	condition: string;
+	phase: string;
+	status: string;
+	location: string;
+	contactEmail: string;
+	description: string;
+}
 
 export async function GET(req: NextRequest) {
-  try {
-    const searchParams = req.nextUrl.searchParams;
-    const query = searchParams.get('query') || '';
-    const status = searchParams.get('status') || '';
-    const phase = searchParams.get('phase') || '';
-    const location = searchParams.get('location') || '';
+	try {
+		const searchParams = req.nextUrl.searchParams;
+		const query = searchParams.get("query") || "";
+		const status = searchParams.get("status") || "";
+		const phase = searchParams.get("phase") || "";
+		const location = searchParams.get("location") || "";
 
-    await dbConnect();
+		await dbConnect();
 
-    // Build filter object for database query
-    const filter: any = {};
-    
-    if (query) {
-      filter.$or = [
-        { title: { $regex: query, $options: 'i' } },
-        { condition: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } },
-        { eligibility: { $regex: query, $options: 'i' } },
-      ];
-    }
+		// Build filter object for database query
+		const filter: any = {};
 
-    if (status) {
-      filter.status = status;
-    }
+		if (query) {
+			filter.$or = [
+				{ title: { $regex: query, $options: "i" } },
+				{ condition: { $regex: query, $options: "i" } },
+				{ description: { $regex: query, $options: "i" } },
+				{ eligibility: { $regex: query, $options: "i" } },
+			];
+		}
 
-    if (phase) {
-      filter.phase = phase;
-    }
+		if (status) {
+			filter.status = status;
+		}
 
-    if (location) {
-      filter.location = { $regex: location, $options: 'i' };
-    }
+		if (phase) {
+			filter.phase = phase;
+		}
 
-    // Search in database (includes researcher-created and cached external trials)
-    let trials = await ClinicalTrial.find(filter)
-      .sort({ updatedAt: -1 })
-      .limit(50);
+		if (location) {
+			filter.location = { $regex: location, $options: "i" };
+		}
 
-    // If searching with query and few results, try external API
-    if (query && trials.length < 5) {
-      try {
-        const externalTrials = await searchClinicalTrials(query, status);
+		// Search in database (includes researcher-created and cached external trials)
+		let trials = await ClinicalTrial.find<ITrial>(filter)
+			.sort({ updatedAt: -1 })
+			.limit(50);
 
-        // Generate AI summaries and cache
-        const newTrials = await Promise.all(
-          externalTrials.map(async (trial) => {
-            // Check if already cached
-            let existingTrial = await ClinicalTrial.findOne({ externalId: trial.nctId });
+		// If searching with query and few results, try external API
+		if (query && trials.length < 5) {
+			try {
+				const externalTrials = await searchClinicalTrials(
+					query,
+					status
+				);
 
-            if (!existingTrial) {
-              // Generate summary
-              const summary = await generateSummary(
-                trial.title,
-                trial.description || trial.condition,
-                'trial'
-              );
+				// Generate AI summaries and cache
+				const newTrials = await Promise.all(
+					externalTrials.map(async (trial) => {
+						// Check if already cached
+						let existingTrial = await ClinicalTrial.findOne({
+							externalId: trial.nctId,
+						});
 
-              // Cache in database
-              existingTrial = await ClinicalTrial.create({
-                externalId: trial.nctId,
-                title: trial.title,
-                phase: trial.phase,
-                status: trial.status,
-                condition: trial.condition,
-                location: trial.location,
-                summary,
-                contactEmail: trial.contactEmail,
-                description: trial.description || '',
-              });
-            }
+						if (!existingTrial) {
+							// Generate summary
+							const summary = await generateSummary(
+								trial.title,
+								trial.description || trial.condition,
+								"trial"
+							);
 
-            return existingTrial;
-          })
-        );
+							// Cache in database
+							existingTrial = await ClinicalTrial.create({
+								externalId: trial.nctId,
+								title: trial.title,
+								phase: trial.phase,
+								status: trial.status,
+								condition: trial.condition,
+								location: trial.location,
+								summary,
+								contactEmail: trial.contactEmail,
+								description: trial.description || "",
+							});
+						}
 
-        // Combine and deduplicate
-        trials = [...trials, ...newTrials].filter((trial, index, self) =>
-          index === self.findIndex((t) => t._id.toString() === trial._id.toString())
-        );
-      } catch (externalError) {
-        console.error('External API error:', externalError);
-        // Continue with database results only
-      }
-    }
+						return existingTrial;
+					})
+				);
 
-    return NextResponse.json({ trials });
-  } catch (error) {
-    console.error('Clinical trials search error:', error);
-    return NextResponse.json({ trials: [] }, { status: 500 });
-  }
+				// Combine and deduplicate
+				trials = [...trials, ...newTrials].filter(
+					(trial, index, self) =>
+						index ===
+						self.findIndex(
+							(t) => t._id.toString() === trial._id.toString()
+						)
+				);
+			} catch (externalError) {
+				console.error("External API error:", externalError);
+				// Continue with database results only
+			}
+		}
+
+		return NextResponse.json({ trials });
+	} catch (error) {
+		console.error("Clinical trials search error:", error);
+		return NextResponse.json({ trials: [] }, { status: 500 });
+	}
 }
