@@ -81,7 +81,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "AI Assistant",
 			icon: Sparkles,
 		},
-		{ href: "/chat", label: "AI Chat", icon: Bot },
+		// { href: "/chat", label: "AI Chat", icon: Bot },
 		{ href: "/patient/experts", label: "Health Experts", icon: Users },
 		{
 			href: "/patient/clinical-trials",
@@ -115,7 +115,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "AI Assistant",
 			icon: Sparkles,
 		},
-		{ href: "/chat", label: "AI Chat", icon: Bot },
+		// { href: "/chat", label: "AI Chat", icon: Bot },
 		{
 			href: "/researcher/collaborators",
 			label: "Collaborators",
