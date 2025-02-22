@@ -2,12 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +15,7 @@ import {
 	X,
 	Minimize2,
 	Sparkles,
+	BotMessageSquare,
 } from "lucide-react";
 import { chat } from "@/utils/ai";
 
@@ -44,7 +40,11 @@ export default function FloatingAIChat() {
 	// Scroll to bottom when messages change
 	useEffect(() => {
 		if (isOpen && !isMinimized) {
-			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+			messagesEndRef.current?.scrollIntoView({ 
+				behavior: "smooth",
+				block: "nearest",
+				inline: "nearest"
+			});
 		}
 	}, [messages, isOpen, isMinimized]);
 
@@ -136,10 +136,10 @@ export default function FloatingAIChat() {
 			{!isOpen && (
 				<button
 					onClick={toggleOpen}
-					className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-gradient-to-br from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 flex items-center justify-center z-50 group animate-pulse hover:animate-none"
+					className="fixed bottom-14 md:bottom-6 right-6 w-16 h-16 rounded-full bg-gradient-to-br from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 flex items-center justify-center z-50 group animate-pulse hover:animate-none"
 					aria-label="Open AI Chat"
 				>
-					<MessageSquare className="h-7 w-7 text-white" />
+					<BotMessageSquare className="h-7 w-7 text-white" />
 					<div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
 						<Sparkles className="h-2.5 w-2.5 text-white" />
 					</div>
@@ -170,7 +170,9 @@ export default function FloatingAIChat() {
 											variant="secondary"
 											className="text-xs bg-white/20 text-white border-0 mt-1"
 										>
-											{userRole === "patient" ? "Patient" : "Researcher"}
+											{userRole === "patient"
+												? "Patient"
+												: "Researcher"}
 										</Badge>
 									</div>
 								</div>
@@ -214,17 +216,21 @@ export default function FloatingAIChat() {
 													: "Ask about trial design or recruitment"}
 											</p>
 											<div className="space-y-1.5">
-												{suggestedPrompts.map((prompt, i) => (
-													<Button
-														key={i}
-														variant="outline"
-														size="sm"
-														onClick={() => setInput(prompt)}
-														className="w-full text-left justify-start h-auto py-2 px-3 rounded-lg text-xs hover:bg-medical-teal-50 hover:border-medical-teal-300"
-													>
-														{prompt}
-													</Button>
-												))}
+												{suggestedPrompts.map(
+													(prompt, i) => (
+														<Button
+															key={i}
+															variant="outline"
+															size="sm"
+															onClick={() =>
+																setInput(prompt)
+															}
+															className="w-full text-left justify-start h-auto py-2 px-3 rounded-lg text-xs hover:bg-medical-teal-50 hover:border-medical-teal-300"
+														>
+															{prompt}
+														</Button>
+													)
+												)}
 											</div>
 										</div>
 									)}
@@ -233,7 +239,9 @@ export default function FloatingAIChat() {
 										<div
 											key={i}
 											className={`flex gap-2 ${
-												msg.role === "user" ? "justify-end" : "justify-start"
+												msg.role === "user"
+													? "justify-end"
+													: "justify-start"
 											}`}
 										>
 											{msg.role === "assistant" && (
@@ -258,10 +266,13 @@ export default function FloatingAIChat() {
 															: "text-gray-500"
 													}`}
 												>
-													{msg.timestamp.toLocaleTimeString([], {
-														hour: "2-digit",
-														minute: "2-digit",
-													})}
+													{msg.timestamp.toLocaleTimeString(
+														[],
+														{
+															hour: "2-digit",
+															minute: "2-digit",
+														}
+													)}
 												</p>
 											</div>
 											{msg.role === "user" && (
@@ -293,7 +304,9 @@ export default function FloatingAIChat() {
 											ref={textareaRef}
 											placeholder="Type your message..."
 											value={input}
-											onChange={(e) => setInput(e.target.value)}
+											onChange={(e) =>
+												setInput(e.target.value)
+											}
 											onKeyPress={handleKeyPress}
 											className="min-h-[40px] max-h-[100px] rounded-lg resize-none text-sm"
 											rows={1}

@@ -59,8 +59,8 @@ export async function GET(req: NextRequest) {
       ],
     })
       .sort({ createdAt: -1 })
-      .populate('sender', 'name email role')
-      .populate('recipient', 'name email role')
+      .populate('sender', 'name email role specialization')
+      .populate('recipient', 'name email role specialization')
       .lean();
 
     // Group messages by conversation partner
@@ -74,12 +74,9 @@ export async function GET(req: NextRequest) {
       
       const otherUserId = otherUser._id.toString();
 
-      // If current user is a researcher, only include conversations with patients
-      // (researcher-to-researcher conversations are handled via /api/collaborators/messages)
-      if (currentUser.role === 'researcher' && otherUser.role === 'researcher') {
-        continue; // Skip this conversation
-      }
-
+      // Include all conversations (removed filter that was skipping researcher-to-researcher)
+      // Researcher-to-researcher conversations will appear in the "Collaborators" tab
+      
       if (!conversationsMap.has(otherUserId)) {
         // Count unread messages from this user
         const unreadCount = await Message.countDocuments({
@@ -88,10 +85,16 @@ export async function GET(req: NextRequest) {
           read: false,
         });
 
+        // For researchers: mark other researchers as "collaborator" for UI filtering
+        const userRole = currentUser.role === 'researcher' && otherUser.role === 'researcher' 
+          ? 'collaborator' 
+          : otherUser.role;
+
         conversationsMap.set(otherUserId, {
           userId: otherUserId,
           userName: otherUser.name,
-          userRole: otherUser.role,
+          userRole: userRole,
+          userSpecialization: otherUser.specialization || null,
           lastMessage: msg.content,
           lastMessageTime: msg.createdAt,
           unreadCount,
@@ -101,7 +104,10 @@ export async function GET(req: NextRequest) {
 
     const conversations = Array.from(conversationsMap.values());
 
-    return NextResponse.json({ conversations });
+    return NextResponse.json({ 
+      success: true,
+      conversations 
+    });
   } catch (error) {
     console.error('Get conversations error:', error);
     return NextResponse.json(

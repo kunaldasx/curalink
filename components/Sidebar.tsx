@@ -154,7 +154,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			{isMobile && !isMobileMenuOpen && (
 				<button
 					onClick={() => setIsMobileMenuOpen(true)}
-					className="fixed top-12 left-4 z-30 md:hidden p-3 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 border border-gray-200"
+					className="absolute -top-3 left-4 z-30 md:hidden p-3 rounded-xl bg-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 border border-gray-200"
 				>
 					<Menu className="h-6 w-6 text-medical-teal-600" />
 				</button>
@@ -251,7 +251,7 @@ export default function Sidebar({ role }: SidebarProps) {
 				</div>
 
 				{/* Navigation Links */}
-				<nav className="flex h-[calc(100%-73px)] flex-col gap-1 p-2 overflow-y-auto">
+				<nav className="flex flex-col gap-1 p-2 overflow-y-auto overflow-hidden">
 					{links.map((link) => {
 						const Icon = link.icon;
 						const isActive = pathname === link.href;
