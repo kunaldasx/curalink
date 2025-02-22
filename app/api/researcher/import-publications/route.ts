@@ -42,8 +42,9 @@ export async function POST(req: NextRequest) {
 
               return {
                 title: work.title,
-                type: work.type,
+                authors: work.authors || [],
                 year: work.publicationYear,
+                journal: work.journal || work.type,
                 doi: work.doi,
                 summary,
                 source: 'ORCID',

@@ -14,6 +14,8 @@ export interface ORCIDWork {
   type: string;
   publicationYear: string;
   doi: string;
+  journal?: string;
+  authors?: string[];
 }
 
 /**
@@ -45,11 +47,12 @@ export async function getORCIDProfile(orcidId: string): Promise<ORCIDProfile | n
       const type = workSummary.type || '';
       const publicationYear = workSummary['publication-date']?.year?.value || '';
       const externalIds = workSummary['external-ids']?.['external-id'] || [];
-      const doi = externalIds.find((id: any) => id['external-id-type'] === 'doi')?.[
-        'external-id-value'
-      ] || '';
+      const doi = externalIds.find((id: any) => id['external-id-type'] === 'doi')?.['external-id-value'] || '';
+      const journal = workSummary['journal-title']?.value || '';
+      // ORCID doesn't always provide author list in summary, so we'll leave it empty
+      const authors: string[] = [];
 
-      return { title, type, publicationYear, doi };
+      return { title, type, publicationYear, doi, journal, authors };
     });
 
     return {
