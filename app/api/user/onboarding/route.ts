@@ -38,7 +38,12 @@ export async function POST(req: NextRequest) {
       const allConditions = Array.from(new Set(combined)); // Remove duplicates
       
       user.medicalConditions = allConditions;
-      user.location = location;
+      if (location) {
+        user.location = {
+          city: location.city || '',
+          country: location.country || '',
+        };
+      }
     } else if (user.role === 'researcher') {
       const { specialties, interests, orcidId, researchGateUrl, acceptsMeetings, location } = body;
       
@@ -47,7 +52,12 @@ export async function POST(req: NextRequest) {
       user.orcidId = orcidId || '';
       user.researchGateUrl = researchGateUrl || '';
       user.acceptsMeetings = acceptsMeetings !== undefined ? acceptsMeetings : false;
-      user.location = location;
+      if (location) {
+        user.location = {
+          city: location.city || '',
+          country: location.country || '',
+        };
+      }
     }
 
     await user.save();

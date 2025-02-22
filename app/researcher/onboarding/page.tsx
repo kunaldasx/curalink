@@ -27,6 +27,8 @@ export default function ResearcherOnboarding() {
 	const [currentStep, setCurrentStep] = useState(1);
 	const [specialties, setSpecialties] = useState<string[]>([]);
 	const [specialtyInput, setSpecialtyInput] = useState("");
+	const [city, setCity] = useState("");
+	const [country, setCountry] = useState("");
 	const [researchInterests, setResearchInterests] = useState<string[]>([]);
 	const [interestInput, setInterestInput] = useState("");
 	const [orcidId, setOrcidId] = useState("");
@@ -135,7 +137,7 @@ export default function ResearcherOnboarding() {
 	const canProgress = () => {
 		switch (currentStep) {
 			case 1:
-				return specialties.length > 0;
+				return specialties.length > 0 && city.trim() !== "" && country.trim() !== "";
 			case 2:
 				return researchInterests.length > 0;
 			case 3:
@@ -158,7 +160,8 @@ export default function ResearcherOnboarding() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					specialties,
-					researchInterests,
+					interests: researchInterests,
+					location: { city, country },
 					orcidId,
 					researchGateUrl,
 					publications,
@@ -349,11 +352,44 @@ export default function ResearcherOnboarding() {
 										</div>
 									</div>
 								)}
+							</div>
+
+							{/* Location Information */}
+							<div className="space-y-4">
+								<Label className="text-lg font-semibold text-gray-800 block">
+									Your Location
+								</Label>
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<div>
+										<Label htmlFor="city" className="text-sm text-gray-600">
+											City *
+										</Label>
+										<Input
+											id="city"
+											placeholder="e.g., Boston"
+											value={city}
+											onChange={(e) => setCity(e.target.value)}
+											className="text-base rounded-xl border-2 border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all"
+										/>
+									</div>
+									<div>
+										<Label htmlFor="country" className="text-sm text-gray-600">
+											Country *
+										</Label>
+										<Input
+											id="country"
+											placeholder="e.g., USA"
+											value={country}
+											onChange={(e) => setCountry(e.target.value)}
+											className="text-base rounded-xl border-2 border-gray-200 focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all"
+										/>
+									</div>
+								</div>
 
 								<div className="flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
 									<Sparkles className="h-5 w-5 text-purple-500 flex-shrink-0 mt-0.5" />
 									<p className="text-sm text-gray-700">
-										Your specialties help categorize your profile and connect you with relevant opportunities
+										Your specialties and location help categorize your profile and connect you with relevant opportunities
 									</p>
 								</div>
 							</div>
