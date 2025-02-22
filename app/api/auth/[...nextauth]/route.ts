@@ -37,7 +37,7 @@ declare module "next-auth/jwt" {
 	}
 }
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
 	providers: [
 		CredentialsProvider({
 			name: "Credentials",
@@ -99,7 +99,7 @@ const authOptions: NextAuthOptions = {
 	session: {
 		strategy: "jwt",
 	},
-	secret: process.env.NEXTAUTH_SECRET,
+	secret: "HkBMKWyEDKlOShmVv2jlcio01udH2Y+ibMzk4exTX1M=",
 };
 
 const handler = NextAuth(authOptions);

@@ -130,14 +130,13 @@ export default function PatientOnboarding() {
 
 			if (response.ok) {
 				// Trigger prepopulation of recommendations
-				await fetch("/api/recommendations/prepopulate", {
-					method: "POST",
-				});
+				// await fetch("/api/recommendations/prepopulate", {
+				// 	method: "POST",
+				// });
 
 				// Show loading animation then redirect
-				setTimeout(() => {
-					router.push("/patient/dashboard");
-				}, 2000);
+
+				router.push("/patient/dashboard");
 			}
 		} catch (error) {
 			console.error("Onboarding error:", error);
