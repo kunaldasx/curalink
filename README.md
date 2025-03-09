@@ -1,13 +1,13 @@
 <h1 align="center" style>
   <br>
-  <a href="https://curalink-research.vercel.app/" target="_blank"><img src="https://raw.githubusercontent.com/kunaldasx/curalink/refs/heads/main/public/logo.png" alt="CuraLink" width="150"></a>
+  <a href="https://curalink-research.vercel.app/" target="_blank"><img src="https://raw.githubusercontent.com/kunaldasx/curalink/refs/heads/main/public/logo.png" alt="CuraLink" width="250"></a>
   <br>
   CuraLink
   <br>
 </h1>
 
 <h4 align="center">
-  A clinical research platform that connects patients and researchers to discover trials, publications, experts, and collaboration opportunities — powered by AI.
+  An AI-powered clinical research platform that helps patients discover clinical trials, publications, and experts while enabling researchers to collaborate, manage studies, and connect with participants.
 </h4>
 
 <p align="center">
@@ -75,20 +75,13 @@ curalink/
 │   ├── (patient)/              # Patient-facing pages
 │   ├── (researcher)/           # Researcher dashboard pages
 │   └── api/                    # API route handlers
-│
 ├── components/                 # Reusable UI components
-│
 ├── lib/                        # Database connection and utilities
-│
 ├── models/                     # Mongoose schemas and models
-│
 ├── hooks/                      # Custom React hooks
-│
 ├── context/                    # React context providers
-│
 ├── utils/                      # Helper functions and external API integrations
 │                               # (ClinicalTrials.gov, PubMed, ORCID, Google Scholar)
-│
 ├── .env.local.example          # Environment variables template
 ├── package.json                # Dependencies and scripts
 └── README.md                   # Project documentation
