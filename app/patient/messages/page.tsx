@@ -1,269 +1,316 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { MessageSquare, Send, Loader2, User, Search } from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { MessageSquare, Send, Loader2, User, Search } from "lucide-react";
 
 interface Message {
-  _id: string;
-  sender: string;
-  recipient: string;
-  content: string;
-  read: boolean;
-  createdAt: string;
+	_id: string;
+	sender: string;
+	recipient: string;
+	content: string;
+	read: boolean;
+	createdAt: string;
 }
 
 interface Conversation {
-  userId: string;
-  userName: string;
-  userRole: string;
-  lastMessage: string;
-  lastMessageTime: string;
-  unreadCount: number;
+	userId: string;
+	userName: string;
+	userRole: string;
+	lastMessage: string;
+	lastMessageTime: string;
+	unreadCount: number;
 }
 
 export default function PatientMessages() {
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string>('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+	const [conversations, setConversations] = useState<Conversation[]>([]);
+	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [newMessage, setNewMessage] = useState("");
+	const [loading, setLoading] = useState(true);
+	const [sending, setSending] = useState(false);
+	const [currentUserId, setCurrentUserId] = useState<string>("");
+	const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchConversations();
-    getCurrentUser();
-  }, []);
+	useEffect(() => {
+		fetchConversations();
+		getCurrentUser();
+	}, []);
 
-  useEffect(() => {
-    if (selectedUserId) {
-      fetchMessages(selectedUserId);
-      const interval = setInterval(() => fetchMessages(selectedUserId), 5000); // Poll every 5s
-      return () => clearInterval(interval);
-    }
-  }, [selectedUserId]);
+	useEffect(() => {
+		if (selectedUserId) {
+			fetchMessages(selectedUserId);
+			const interval = setInterval(
+				() => fetchMessages(selectedUserId),
+				5000
+			); // Poll every 5s
+			return () => clearInterval(interval);
+		}
+	}, [selectedUserId]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
 
-  const getCurrentUser = async () => {
-    try {
-      const res = await fetch('/api/auth/me');
-      const data = await res.json();
-      setCurrentUserId(data.user?.id || '');
-    } catch (error) {
-      console.error('Get current user error:', error);
-    }
-  };
+	const getCurrentUser = async () => {
+		try {
+			const res = await fetch("/api/auth/me");
+			const data = await res.json();
+			setCurrentUserId(data.user?.id || "");
+		} catch (error) {
+			console.error("Get current user error:", error);
+		}
+	};
 
-  const fetchConversations = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/messages/conversations');
-      const data = await res.json();
-      setConversations(data.conversations || []);
-    } catch (error) {
-      console.error('Fetch conversations error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+	const fetchConversations = async () => {
+		setLoading(true);
+		try {
+			const res = await fetch("/api/messages/conversations");
+			const data = await res.json();
+			setConversations(data.conversations || []);
+		} catch (error) {
+			console.error("Fetch conversations error:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  const fetchMessages = async (userId: string) => {
-    try {
-      const res = await fetch(`/api/collaborators/messages?userId=${userId}`);
-      const data = await res.json();
-      setMessages(data.messages || []);
-    } catch (error) {
-      console.error('Fetch messages error:', error);
-    }
-  };
+	const fetchMessages = async (userId: string) => {
+		try {
+			const res = await fetch(
+				`/api/collaborators/messages?userId=${userId}`
+			);
+			const data = await res.json();
+			setMessages(data.messages || []);
+		} catch (error) {
+			console.error("Fetch messages error:", error);
+		}
+	};
 
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedUserId) return;
+	const sendMessage = async () => {
+		if (!newMessage.trim() || !selectedUserId) return;
 
-    setSending(true);
-    try {
-      const response = await fetch('/api/collaborators/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          toUserId: selectedUserId,
-          message: newMessage,
-        }),
-      });
+		setSending(true);
+		try {
+			const response = await fetch("/api/collaborators/messages", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					toUserId: selectedUserId,
+					message: newMessage,
+				}),
+			});
 
-      if (response.ok) {
-        setNewMessage('');
-        fetchMessages(selectedUserId);
-        fetchConversations(); // Update conversation list
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to send: ${errorData.error}`);
-      }
-    } catch (error) {
-      console.error('Send error:', error);
-      alert('Failed to send message');
-    } finally {
-      setSending(false);
-    }
-  };
+			if (response.ok) {
+				setNewMessage("");
+				fetchMessages(selectedUserId);
+				fetchConversations(); // Update conversation list
+			} else {
+				const errorData = await response.json();
+				alert(`Failed to send: ${errorData.error}`);
+			}
+		} catch (error) {
+			console.error("Send error:", error);
+			alert("Failed to send message");
+		} finally {
+			setSending(false);
+		}
+	};
 
-  const selectedConversation = conversations.find(c => c.userId === selectedUserId);
+	const selectedConversation = conversations.find(
+		(c) => c.userId === selectedUserId
+	);
 
-  return (
-    <div className="h-[calc(100vh-120px)] flex flex-col md:flex-row gap-4 md:gap-6">
-      {/* Conversations List */}
-      <Card className="w-full md:w-80 flex flex-col rounded-2xl shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-medical-teal-50 to-medical-indigo-50 border-b-2 border-medical-teal-100">
-          <CardTitle className="flex items-center gap-2 text-gray-800">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
-              <MessageSquare className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold">Messages</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto p-0">
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-            </div>
-          ) : conversations.length === 0 ? (
-            <div className="text-center py-8 px-4">
-              <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">No conversations yet</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Start chatting from accepted meeting requests
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {conversations.map((conv) => (
-                <button
-                  key={conv.userId}
-                  onClick={() => setSelectedUserId(conv.userId)}
-                  className={`w-full p-4 text-left transition-all duration-200 hover:bg-gradient-to-r hover:from-medical-teal-50 hover:to-medical-indigo-50 ${
-                    selectedUserId === conv.userId 
-                      ? 'bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 border-l-4 border-medical-teal-500' 
-                      : 'border-l-4 border-transparent'
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
-                        <User className="h-4 w-4 text-white" />
-                      </div>
-                      <span className="font-semibold text-sm text-gray-800">{conv.userName}</span>
-                    </div>
-                    {conv.unreadCount > 0 && (
-                      <Badge className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 text-white">
-                        {conv.unreadCount}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600 truncate ml-10">{conv.lastMessage}</p>
-                  <p className="text-xs text-gray-500 mt-1 ml-10">
-                    {new Date(conv.lastMessageTime).toLocaleString()}
-                  </p>
-                </button>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+	return (
+		<div className="h-[calc(100vh-120px)] flex flex-col md:flex-row gap-4 md:gap-6">
+			{/* Conversations List */}
+			<Card className="w-full md:w-80 flex flex-col rounded-2xl shadow-lg border-0">
+				<CardHeader className="bg-gradient-to-r from-medical-teal-50 to-medical-indigo-50 border-b-2 border-medical-teal-100">
+					<CardTitle className="flex items-center gap-2 text-gray-800">
+						<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
+							<MessageSquare className="h-5 w-5 text-white" />
+						</div>
+						<span className="text-xl font-bold">Messages</span>
+					</CardTitle>
+				</CardHeader>
+				<CardContent className="flex-1 overflow-y-auto p-0">
+					{loading ? (
+						<div className="flex items-center justify-center py-8">
+							<Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+						</div>
+					) : conversations.length === 0 ? (
+						<div className="text-center py-8 px-4">
+							<MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+							<p className="text-sm text-muted-foreground">
+								No conversations yet
+							</p>
+							<p className="text-xs text-muted-foreground mt-1">
+								Start chatting from accepted meeting requests
+							</p>
+						</div>
+					) : (
+						<div className="divide-y">
+							{conversations.map((conv) => (
+								<button
+									key={conv.userId}
+									onClick={() =>
+										setSelectedUserId(conv.userId)
+									}
+									className={`w-full p-4 text-left transition-all duration-200 hover:bg-gradient-to-r hover:from-medical-teal-50 hover:to-medical-indigo-50 ${
+										selectedUserId === conv.userId
+											? "bg-gradient-to-r from-medical-teal-100 to-medical-indigo-100 border-l-4 border-medical-teal-500"
+											: "border-l-4 border-transparent"
+									}`}
+								>
+									<div className="flex items-start justify-between mb-2">
+										<div className="flex items-center gap-2">
+											<div className="w-8 h-8 rounded-full bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
+												<User className="h-4 w-4 text-white" />
+											</div>
+											<span className="font-semibold text-sm text-gray-800">
+												{conv.userName}
+											</span>
+										</div>
+										{conv.unreadCount > 0 && (
+											<Badge className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 text-white">
+												{conv.unreadCount}
+											</Badge>
+										)}
+									</div>
+									<p className="text-sm text-gray-600 truncate ml-10">
+										{conv.lastMessage}
+									</p>
+									<p className="text-xs text-gray-500 mt-1 ml-10">
+										{new Date(
+											conv.lastMessageTime
+										).toLocaleString()}
+									</p>
+								</button>
+							))}
+						</div>
+					)}
+				</CardContent>
+			</Card>
 
-      {/* Chat Window */}
-      <Card className="flex-1 flex flex-col rounded-2xl shadow-lg border-0">
-        {selectedUserId ? (
-          <>
-            <CardHeader className="bg-gradient-to-r from-medical-indigo-50 to-medical-lavender-50 border-b-2 border-medical-indigo-100">
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-medical-indigo-400 to-medical-lavender-400 flex items-center justify-center">
-                  <User className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <span className="text-xl font-bold text-gray-800">{selectedConversation?.userName || 'Researcher'}</span>
-                  <Badge className="ml-2 px-3 py-1 rounded-full bg-gradient-to-r from-medical-indigo-100 to-medical-lavender-100 text-medical-indigo-700 border border-medical-indigo-300">
-                    {selectedConversation?.userRole || 'Researcher'}
-                  </Badge>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto p-4 space-y-3">
-              {messages.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No messages yet. Start the conversation!</p>
-                </div>
-              ) : (
-                messages.map((msg) => {
-                  // Convert to string for comparison (handles ObjectId)
-                  const senderId = typeof msg.sender === 'string' ? msg.sender : String(msg.sender || '');
-                  const isOwn = senderId === currentUserId;
-                  return (
-                    <div
-                      key={msg._id}
-                      className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                          isOwn
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-gray-100 text-gray-900'
-                        }`}
-                      >
-                        <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                        <p
-                          className={`text-xs mt-1 ${
-                            isOwn ? 'text-blue-100' : 'text-gray-500'
-                          }`}
-                        >
-                          {new Date(msg.createdAt).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-              <div ref={messagesEndRef} />
-            </CardContent>
-            <div className="border-t p-4">
-              <div className="flex gap-2">
-                <Input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                  placeholder="Type your message..."
-                  disabled={sending}
-                />
-                <Button onClick={sendMessage} disabled={sending || !newMessage.trim()}>
-                  {sending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-muted-foreground">Select a conversation to start chatting</p>
-            </div>
-          </div>
-        )}
-      </Card>
-    </div>
-  );
+			{/* Chat Window */}
+			<Card className="flex-1 flex flex-col rounded-2xl shadow-lg border-0">
+				{selectedUserId ? (
+					<>
+						<CardHeader className="bg-gradient-to-r from-medical-indigo-50 to-medical-lavender-50 border-b-2 border-medical-indigo-100">
+							<CardTitle className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-full bg-gradient-to-br from-medical-indigo-400 to-medical-lavender-400 flex items-center justify-center">
+									<User className="h-5 w-5 text-white" />
+								</div>
+								<div>
+									<span className="text-xl font-bold text-gray-800">
+										{selectedConversation?.userName ||
+											"Researcher"}
+									</span>
+									<Badge className="ml-2 px-3 py-1 rounded-full bg-gradient-to-r from-medical-indigo-100 to-medical-lavender-100 text-medical-indigo-700 border border-medical-indigo-300">
+										{selectedConversation?.userRole ||
+											"Researcher"}
+									</Badge>
+								</div>
+							</CardTitle>
+						</CardHeader>
+						<CardContent className="flex-1 overflow-y-auto p-4 space-y-3">
+							{messages.length === 0 ? (
+								<div className="text-center py-8">
+									<p className="text-muted-foreground">
+										No messages yet. Start the conversation!
+									</p>
+								</div>
+							) : (
+								messages.map((msg) => {
+									// Convert to string for comparison (handles ObjectId)
+									const senderId =
+										typeof msg.sender === "string"
+											? msg.sender
+											: String(msg.sender || "");
+									const isOwn = senderId === currentUserId;
+									return (
+										<div
+											key={msg._id}
+											className={`flex ${
+												isOwn
+													? "justify-end"
+													: "justify-start"
+											}`}
+										>
+											<div
+												className={`max-w-[70%] rounded-lg px-4 py-2 ${
+													isOwn
+														? "bg-blue-600 text-white"
+														: "bg-gray-100 text-gray-900"
+												}`}
+											>
+												<p className="text-sm whitespace-pre-wrap">
+													{msg.content}
+												</p>
+												<p
+													className={`text-xs mt-1 ${
+														isOwn
+															? "text-blue-100"
+															: "text-gray-500"
+													}`}
+												>
+													{new Date(
+														msg.createdAt
+													).toLocaleTimeString()}
+												</p>
+											</div>
+										</div>
+									);
+								})
+							)}
+							<div ref={messagesEndRef} />
+						</CardContent>
+						<div className="border-t p-4">
+							<div className="flex gap-2">
+								<Input
+									value={newMessage}
+									onChange={(e) =>
+										setNewMessage(e.target.value)
+									}
+									onKeyDown={(e) =>
+										e.key === "Enter" &&
+										!e.shiftKey &&
+										sendMessage()
+									}
+									placeholder="Type your message..."
+									disabled={sending}
+								/>
+								<Button
+									onClick={sendMessage}
+									disabled={sending || !newMessage.trim()}
+								>
+									{sending ? (
+										<Loader2 className="h-4 w-4 animate-spin" />
+									) : (
+										<Send className="h-4 w-4" />
+									)}
+								</Button>
+							</div>
+						</div>
+					</>
+				) : (
+					<div className="flex-1 flex items-center justify-center">
+						<div className="text-center">
+							<MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+							<p className="text-muted-foreground">
+								Select a conversation to start chatting
+							</p>
+						</div>
+					</div>
+				)}
+			</Card>
+		</div>
+	);
 }

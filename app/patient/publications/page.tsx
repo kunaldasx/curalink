@@ -25,6 +25,7 @@ import {
 	TrendingUp,
 	Loader2,
 } from "lucide-react";
+import { link } from "fs";
 
 export default function PatientPublications() {
 	const [query, setQuery] = useState("");
@@ -55,8 +56,6 @@ export default function PatientPublications() {
 	};
 
 	const handleSearch = async () => {
-		if (!query) return;
-
 		setLoading(true);
 		setIsPersonalized(false);
 		try {
@@ -190,7 +189,7 @@ export default function PatientPublications() {
 								placeholder="e.g., diabetes treatment, cancer immunotherapy"
 								value={query}
 								onChange={(e) => setQuery(e.target.value)}
-								onKeyPress={(e) =>
+								onKeyDown={(e) =>
 									e.key === "Enter" && handleSearch()
 								}
 								className="text-base rounded-xl border-2 border-gray-200 focus:border-medical-teal-400 focus:ring-4 focus:ring-medical-teal-100 transition-all duration-200 p-4"
@@ -257,6 +256,15 @@ export default function PatientPublications() {
 									? "No publications found for your conditions"
 									: "Enter a search term to find relevant publications"}
 							</p>
+
+							<Button
+								variant="link"
+								className="flex justify-center items-center w-full"
+								onClick={handleSearch}
+							>
+								<Search className="mr-2 h-5 w-5" />
+								View all publications
+							</Button>
 						</CardContent>
 					</Card>
 				)}

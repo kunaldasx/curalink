@@ -153,7 +153,9 @@ export default function AIChat() {
 								: "bg-gradient-to-r from-blue-500 to-purple-500"
 						} text-white`}
 					>
-						{userRole === "patient" ? "Patient Mode" : "Researcher Mode"}
+						{userRole === "patient"
+							? "Patient Mode"
+							: "Researcher Mode"}
 					</Badge>
 				</div>
 			</div>
@@ -175,7 +177,9 @@ export default function AIChat() {
 									: "I can help you with trial design, patient engagement, and research best practices."}
 							</p>
 							<div className="space-y-2">
-								<p className="text-sm text-gray-500 mb-3">Try asking:</p>
+								<p className="text-sm text-gray-500 mb-3">
+									Try asking:
+								</p>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-3xl mx-auto">
 									{suggestedPrompts.map((prompt, i) => (
 										<Button
@@ -186,7 +190,9 @@ export default function AIChat() {
 											className="text-left justify-start h-auto py-3 px-4 rounded-xl hover:bg-medical-teal-50 hover:border-medical-teal-300 transition-all"
 										>
 											<MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
-											<span className="text-sm">{prompt}</span>
+											<span className="text-sm">
+												{prompt}
+											</span>
 										</Button>
 									))}
 								</div>
@@ -198,7 +204,9 @@ export default function AIChat() {
 						<div
 							key={i}
 							className={`flex gap-3 ${
-								msg.role === "user" ? "justify-end" : "justify-start"
+								msg.role === "user"
+									? "justify-end"
+									: "justify-start"
 							}`}
 						>
 							{msg.role === "assistant" && (
@@ -265,7 +273,7 @@ export default function AIChat() {
 							}
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
-							onKeyPress={handleKeyPress}
+							onKeyDown={handleKeyPress}
 							className="min-h-[60px] max-h-[200px] rounded-xl resize-none"
 							rows={1}
 						/>

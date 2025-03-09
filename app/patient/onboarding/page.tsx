@@ -362,7 +362,7 @@ export default function PatientOnboarding() {
 													e.target.value
 												)
 											}
-											onKeyPress={(e) => {
+											onKeyDown={(e) => {
 												if (e.key === "Enter") {
 													e.preventDefault();
 													addCondition(

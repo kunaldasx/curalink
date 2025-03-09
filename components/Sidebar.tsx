@@ -81,6 +81,12 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "AI Assistant",
 			icon: Sparkles,
 		},
+		{
+			href: "/patient/publications",
+			label: "Publications",
+			icon: BookOpen,
+		},
+		{ href: "/patient/forums", label: "Forums", icon: Mail },
 		// { href: "/chat", label: "AI Chat", icon: Bot },
 		{ href: "/patient/experts", label: "Health Experts", icon: Users },
 		{
@@ -94,12 +100,6 @@ export default function Sidebar({ role }: SidebarProps) {
 			icon: CalendarCheck,
 		},
 		{ href: "/patient/messages", label: "Messages", icon: MessageSquare },
-		{
-			href: "/patient/publications",
-			label: "Publications",
-			icon: BookOpen,
-		},
-		{ href: "/patient/forums", label: "Forums", icon: Mail },
 		{ href: "/patient/favorites", label: "Favorites", icon: Heart },
 		{ href: "/patient/profile", label: "My Profile", icon: UserCog },
 	];
@@ -117,6 +117,12 @@ export default function Sidebar({ role }: SidebarProps) {
 		},
 		// { href: "/chat", label: "AI Chat", icon: Bot },
 		{
+			href: "/researcher/publications",
+			label: "Publications",
+			icon: BookOpen,
+		},
+		{ href: "/researcher/forums", label: "Forums", icon: Mail },
+		{
 			href: "/researcher/collaborators",
 			label: "Collaborators",
 			icon: Users,
@@ -126,11 +132,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "Clinical Trials",
 			icon: FlaskConical,
 		},
-		{
-			href: "/researcher/publications",
-			label: "Publications",
-			icon: BookOpen,
-		},
+
 		{
 			href: "/researcher/meeting-requests",
 			label: "Meeting Requests",
@@ -141,7 +143,7 @@ export default function Sidebar({ role }: SidebarProps) {
 			label: "Messages",
 			icon: MessageSquare,
 		},
-		{ href: "/researcher/forums", label: "Forums", icon: Mail },
+
 		{ href: "/researcher/favorites", label: "Favorites", icon: Heart },
 		{ href: "/researcher/profile", label: "My Profile", icon: UserCog },
 	];

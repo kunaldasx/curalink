@@ -40,10 +40,10 @@ export default function FloatingAIChat() {
 	// Scroll to bottom when messages change
 	useEffect(() => {
 		if (isOpen && !isMinimized) {
-			messagesEndRef.current?.scrollIntoView({ 
+			messagesEndRef.current?.scrollIntoView({
 				behavior: "smooth",
 				block: "nearest",
-				inline: "nearest"
+				inline: "nearest",
 			});
 		}
 	}, [messages, isOpen, isMinimized]);
@@ -149,10 +149,9 @@ export default function FloatingAIChat() {
 			{/* Chat Widget */}
 			{isOpen && (
 				<div
-					className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
-						isMinimized ? "w-80" : "w-96"
+					className={`fixed bottom-6 right-6 z-50 transition-all duration-300 w-96 max-h-[600px] sm:w-80 sm:max-h-[600px] max-[420px]:w-[90vw] max-[420px]:right-3 ${
+						isMinimized ? "max-h-[60px]" : ""
 					}`}
-					style={{ maxHeight: isMinimized ? "60px" : "600px" }}
 				>
 					<Card className="rounded-2xl shadow-2xl border-0 overflow-hidden flex flex-col h-full">
 						{/* Header */}
@@ -307,7 +306,7 @@ export default function FloatingAIChat() {
 											onChange={(e) =>
 												setInput(e.target.value)
 											}
-											onKeyPress={handleKeyPress}
+											onKeyDown={handleKeyPress}
 											className="min-h-[40px] max-h-[100px] rounded-lg resize-none text-sm"
 											rows={1}
 										/>
