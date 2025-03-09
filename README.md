@@ -1,6 +1,6 @@
 <h1 align="center" style>
   <br>
-  <a href="https://curalink-research.vercel.app/" target="_blank"><img src="https://img.icons8.com/fluency/96/medical-doctor.png" alt="CuraLink" width="150"></a>
+  <a href="https://curalink-research.vercel.app/" target="_blank"><img src="https://raw.githubusercontent.com/kunaldasx/curalink/refs/heads/main/public/logo.png" alt="CuraLink" width="150"></a>
   <br>
   CuraLink
   <br>
@@ -32,6 +32,12 @@
   <a href="#technologies">Technologies</a> •
   <a href="#license">License</a>
 </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kunaldasx/curalink/refs/heads/main/public/demo-banner.png" alt="preview" width="100%" />
+</p>
+
+🌐 **Live Demo**🔗 [curalink-research.vercel.app](https://curalink-research.vercel.app)
 
 ## Key Features
 
