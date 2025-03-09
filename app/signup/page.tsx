@@ -24,7 +24,7 @@ export default function SignupPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [role, setRole] = useState<"patient" | "researcher">(
-		roleParam as "patient" | "researcher"
+		roleParam as "patient" | "researcher",
 	);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -58,9 +58,7 @@ export default function SignupPage() {
 			});
 
 			if (signInResult?.error) {
-				setError(
-					"Account created but login failed. Please log in manually."
-				);
+				setError("Account created but login failed. Please log in manually.");
 				setLoading(false);
 				return;
 			}
@@ -91,9 +89,7 @@ export default function SignupPage() {
 				<Card>
 					<CardHeader>
 						<CardTitle>Create Account</CardTitle>
-						<CardDescription>
-							Join CuraLink as a {role}
-						</CardDescription>
+						<CardDescription>Join CuraLink as a {role}</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<form onSubmit={handleSubmit} className="space-y-4">
@@ -109,20 +105,12 @@ export default function SignupPage() {
 									id="role"
 									value={role}
 									onChange={(e) =>
-										setRole(
-											e.target.value as
-												| "patient"
-												| "researcher"
-										)
+										setRole(e.target.value as "patient" | "researcher")
 									}
 									className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
 								>
-									<option value="patient">
-										Patient/Caregiver
-									</option>
-									<option value="researcher">
-										Researcher
-									</option>
+									<option value="patient">Patient/Caregiver</option>
+									<option value="researcher">Researcher</option>
 								</select>
 							</div>
 
@@ -156,26 +144,20 @@ export default function SignupPage() {
 									id="password"
 									type="password"
 									value={password}
-									onChange={(e) =>
-										setPassword(e.target.value)
-									}
+									onChange={(e) => setPassword(e.target.value)}
 									required
 									minLength={6}
 								/>
 							</div>
 
-							<Button
-								type="submit"
-								className="w-full"
-								disabled={loading}
-							>
+							<Button type="submit" className="w-full" disabled={loading}>
 								{loading ? "Creating account..." : "Sign Up"}
 							</Button>
 
 							<p className="text-center text-sm text-gray-600">
 								Already have an account?{" "}
 								<Link
-									href="/login"
+									href={`/login?role=${roleParam}`}
 									className="text-primary font-medium hover:underline"
 								>
 									Log in

@@ -120,18 +120,18 @@ export default function LandingPage() {
 
 					{/* Subcopy */}
 					<p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-up animation-delay-200">
-						Your journey deserves guidance. Every breakthrough
-						starts with connection.
+						Your journey deserves guidance. Every breakthrough starts with
+						connection.
 						<br />
 						<span className="text-lg text-gray-500 mt-2 block">
-							Find clinical trials, discover experts, and explore
-							cutting-edge research.
+							Find clinical trials, discover experts, and explore cutting-edge
+							research.
 						</span>
 					</p>
 
 					{/* CTA Buttons */}
 					<div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in-up animation-delay-400">
-						<Link href="/signup?role=patient">
+						<Link href="/login?role=patient">
 							<Button
 								size="lg"
 								className="group px-12 py-8 text-lg rounded-2xl font-semibold bg-gradient-to-r from-medical-teal-500 to-medical-indigo-500 hover:from-medical-teal-600 hover:to-medical-indigo-600 text-white shadow-2xl hover:shadow-medical-teal-500/50 transition-all duration-300 hover:scale-105 animate-breathing w-full sm:w-auto"
@@ -141,7 +141,7 @@ export default function LandingPage() {
 								<ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
 							</Button>
 						</Link>
-						<Link href="/signup?role=researcher">
+						<Link href="/login?role=researcher">
 							<Button
 								size="lg"
 								className="group px-12 py-8 text-lg rounded-2xl font-semibold bg-white text-gray-800 border-2 border-medical-indigo-300 hover:border-medical-indigo-500 hover:bg-gradient-to-r hover:from-medical-indigo-50 hover:to-medical-lavender-50 shadow-xl transition-all duration-300 hover:scale-105 w-full sm:w-auto"
@@ -154,7 +154,7 @@ export default function LandingPage() {
 					</div>
 
 					{/* Login Link */}
-					<p className="text-gray-600 animate-fade-in-up animation-delay-600">
+					{/* <p className="text-gray-600 animate-fade-in-up animation-delay-600">
 						Already have an account?{" "}
 						<Link
 							href="/login"
@@ -162,7 +162,7 @@ export default function LandingPage() {
 						>
 							Log in
 						</Link>
-					</p>
+					</p> */}
 
 					{/* Scroll Indicator */}
 					<div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
@@ -240,9 +240,8 @@ export default function LandingPage() {
 								</span>
 							</h2>
 							<p className="text-xl text-gray-600 mb-8 leading-relaxed">
-								Discover clinical trials tailored to your
-								condition. We match you with opportunities that
-								could change everything.
+								Discover clinical trials tailored to your condition. We match
+								you with opportunities that could change everything.
 							</p>
 							<div className="space-y-4">
 								{[
@@ -250,16 +249,11 @@ export default function LandingPage() {
 									"Location-Based Matching",
 									"Real-time Updates",
 								].map((item, i) => (
-									<div
-										key={i}
-										className="flex items-center gap-3"
-									>
+									<div key={i} className="flex items-center gap-3">
 										<div className="w-10 h-10 rounded-xl bg-gradient-to-br from-medical-teal-400 to-medical-indigo-400 flex items-center justify-center">
 											<CheckCircle2 className="h-5 w-5 text-white" />
 										</div>
-										<span className="text-gray-700 font-medium">
-											{item}
-										</span>
+										<span className="text-gray-700 font-medium">{item}</span>
 									</div>
 								))}
 							</div>
@@ -297,9 +291,8 @@ export default function LandingPage() {
 								</span>
 							</h2>
 							<p className="text-xl text-gray-600 mb-8 leading-relaxed">
-								Access a global network of medical experts ready
-								to guide your journey with compassion and
-								expertise.
+								Access a global network of medical experts ready to guide your
+								journey with compassion and expertise.
 							</p>
 							<div className="grid grid-cols-2 gap-4">
 								{[
@@ -316,9 +309,7 @@ export default function LandingPage() {
 										className="p-4 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow"
 									>
 										<item.icon className="h-8 w-8 text-medical-indigo-500 mb-2" />
-										<p className="font-medium text-gray-700">
-											{item.label}
-										</p>
+										<p className="font-medium text-gray-700">{item.label}</p>
 									</div>
 								))}
 							</div>
@@ -356,9 +347,8 @@ export default function LandingPage() {
 								</span>
 							</h2>
 							<p className="text-xl text-gray-600 mb-8 leading-relaxed">
-								Stay informed with the latest breakthroughs.
-								Access thousands of medical publications
-								tailored to your interests.
+								Stay informed with the latest breakthroughs. Access thousands of
+								medical publications tailored to your interests.
 							</p>
 							<Button className="px-8 py-6 text-lg rounded-xl font-semibold bg-gradient-to-r from-medical-lavender-500 to-medical-teal-500 hover:from-medical-lavender-600 hover:to-medical-teal-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
 								<BookOpen className="mr-2 h-5 w-5" />
@@ -399,9 +389,8 @@ export default function LandingPage() {
 								</span>
 							</h2>
 							<p className="text-xl text-gray-600 mb-8 leading-relaxed">
-								Share experiences, ask questions, and find
-								support in our compassionate community of
-								patients and experts.
+								Share experiences, ask questions, and find support in our
+								compassionate community of patients and experts.
 							</p>
 							<div className="flex flex-wrap gap-3">
 								{[
@@ -447,8 +436,8 @@ export default function LandingPage() {
 							</span>
 						</h2>
 						<p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-							Breakthroughs start with connection. Your journey
-							matters, and we're here to guide every step.
+							Breakthroughs start with connection. Your journey matters, and
+							we're here to guide every step.
 						</p>
 						<div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up animation-delay-800">
 							<Link href="/signup?role=patient">

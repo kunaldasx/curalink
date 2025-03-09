@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,8 +17,14 @@ import {
 import { Activity } from "lucide-react";
 
 export default function LoginPage() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const searchParams = useSearchParams();
+	const roleParam = searchParams.get("role") || "patient";
+
+	const userEmail =
+		roleParam === "patient" ? "john@gmail.com" : "jake@gmail.com";
+	const userPassword = "qwerty";
+	const [email, setEmail] = useState(userEmail);
+	const [password, setPassword] = useState(userPassword);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
@@ -69,9 +75,7 @@ export default function LoginPage() {
 				<Card>
 					<CardHeader>
 						<CardTitle>Welcome Back</CardTitle>
-						<CardDescription>
-							Log in to your CuraLink account
-						</CardDescription>
+						<CardDescription>Log in to your CuraLink account</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<form onSubmit={handleSubmit} className="space-y-4">
@@ -99,25 +103,19 @@ export default function LoginPage() {
 									id="password"
 									type="password"
 									value={password}
-									onChange={(e) =>
-										setPassword(e.target.value)
-									}
+									onChange={(e) => setPassword(e.target.value)}
 									required
 								/>
 							</div>
 
-							<Button
-								type="submit"
-								className="w-full"
-								disabled={loading}
-							>
+							<Button type="submit" className="w-full" disabled={loading}>
 								{loading ? "Logging in..." : "Log In"}
 							</Button>
 
 							<p className="text-center text-sm text-gray-600">
 								Don't have an account?{" "}
 								<Link
-									href="/signup"
+									href={`/signup?role=${roleParam}`}
 									className="text-primary font-medium hover:underline"
 								>
 									Sign up
