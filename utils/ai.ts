@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyCrxMRQ1CNzZWZUma0HvPyS2tr75Y0DCH4");
+const genAI = new GoogleGenerativeAI("AIzaSyBwiH6MdSDtxO_7yORAuM-pDOUxE592igw");
 
 // Types for AI Assistant responses
 export interface EligibilityEstimate {
