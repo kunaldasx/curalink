@@ -1,133 +1,135 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI("AIzaSyBwiH6MdSDtxO_7yORAuM-pDOUxE592igw");
+const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY!);
+
+console.log("API KEY: ", process.env.NEXT_PUBLIC_GEMINI_API_KEYnAI);
 
 // Types for AI Assistant responses
 export interface EligibilityEstimate {
-  score: number; // 0-100
-  level: "high" | "medium" | "low";
-  factors: {
-    positive: string[];
-    negative: string[];
-    neutral: string[];
-  };
-  explanation: string;
+	score: number; // 0-100
+	level: "high" | "medium" | "low";
+	factors: {
+		positive: string[];
+		negative: string[];
+		neutral: string[];
+	};
+	explanation: string;
 }
 
 export interface TravelBurden {
-  score: number; // 0-100, higher = more burden
-  level: "low" | "medium" | "high";
-  factors: string[];
-  recommendations: string[];
+	score: number; // 0-100, higher = more burden
+	level: "low" | "medium" | "high";
+	factors: string[];
+	recommendations: string[];
 }
 
 export interface SimplifiedTrial {
-  summary: string;
-  purpose: string;
-  whatHappens: string;
-  timeCommitment: string;
-  risks: string;
-  benefits: string;
+	summary: string;
+	purpose: string;
+	whatHappens: string;
+	timeCommitment: string;
+	risks: string;
+	benefits: string;
 }
 
 export interface NextSteps {
-  immediate: string[];
-  shortTerm: string[];
-  longTerm: string[];
-  resources: string[];
+	immediate: string[];
+	shortTerm: string[];
+	longTerm: string[];
+	resources: string[];
 }
 
 // Researcher-specific types
 export interface RecruitmentStrategy {
-  targetAudience: string[];
-  channels: string[];
-  messaging: string[];
-  timeline: string;
-  considerations: string[];
+	targetAudience: string[];
+	channels: string[];
+	messaging: string[];
+	timeline: string;
+	considerations: string[];
 }
 
 export interface PatientEligibilityAnalysis {
-  likelyEligible: number; // percentage
-  requiredCriteria: string[];
-  optionalCriteria: string[];
-  exclusions: string[];
-  recommendations: string[];
+	likelyEligible: number; // percentage
+	requiredCriteria: string[];
+	optionalCriteria: string[];
+	exclusions: string[];
+	recommendations: string[];
 }
 
 export interface TrialDesignSuggestions {
-  strengths: string[];
-  improvements: string[];
-  patientBurden: string;
-  recruitmentTips: string[];
-  ethicalConsiderations: string[];
+	strengths: string[];
+	improvements: string[];
+	patientBurden: string;
+	recruitmentTips: string[];
+	ethicalConsiderations: string[];
 }
 
 /**
  * Extract disease/condition keywords from natural language text
  */
 export async function extractDiseaseKeywords(text: string): Promise<string[]> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a medical assistant. Extract disease names and medical conditions from user input. Return ONLY a JSON array of strings, nothing else. No markdown, no explanations.
+		const prompt = `You are a medical assistant. Extract disease names and medical conditions from user input. Return ONLY a JSON array of strings, nothing else. No markdown, no explanations.
 
 User input: "${text}"
 
 Return format example: ["diabetes", "heart disease"]`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
 
-    // Remove markdown code blocks if present
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		// Remove markdown code blocks if present
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    const keywords = JSON.parse(cleanContent);
-    return Array.isArray(keywords) ? keywords : [];
-  } catch (error) {
-    console.error("Error extracting disease keywords:", error);
-    return [];
-  }
+		const keywords = JSON.parse(cleanContent);
+		return Array.isArray(keywords) ? keywords : [];
+	} catch (error) {
+		console.error("Error extracting disease keywords:", error);
+		return [];
+	}
 }
 
 /**
  * Generate AI summary for clinical trial or publication
  */
 export async function generateSummary(
-  title: string,
-  content: string,
-  type: "trial" | "publication",
+	title: string,
+	content: string,
+	type: "trial" | "publication",
 ): Promise<string> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt =
-      type === "trial"
-        ? `Summarize this clinical trial in 2-3 sentences for patients in simple, patient-friendly language:\n\nTitle: ${title}\n\nDescription: ${content}\n\nProvide only the summary, no additional text.`
-        : `Summarize this research publication in 2-3 sentences for patients in simple, patient-friendly language:\n\nTitle: ${title}\n\nAbstract: ${content}\n\nProvide only the summary, no additional text.`;
+		const prompt =
+			type === "trial"
+				? `Summarize this clinical trial in 2-3 sentences for patients in simple, patient-friendly language:\n\nTitle: ${title}\n\nDescription: ${content}\n\nProvide only the summary, no additional text.`
+				: `Summarize this research publication in 2-3 sentences for patients in simple, patient-friendly language:\n\nTitle: ${title}\n\nAbstract: ${content}\n\nProvide only the summary, no additional text.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
 
-    return simplified || "Summary unavailable.";
-  } catch (error) {
-    console.error("Error generating summary:", error);
-    return "Summary unavailable.";
-  }
+		return simplified || "Summary unavailable.";
+	} catch (error) {
+		console.error("Error generating summary:", error);
+		return "Summary unavailable.";
+	}
 }
 
 /**
  * Simplify clinical trial into easy-to-understand sections
  */
 export async function simplifyTrial(trialData: {
-  title: string;
-  description: string;
-  phase?: string;
-  eligibility?: string;
+	title: string;
+	description: string;
+	phase?: string;
+	eligibility?: string;
 }): Promise<SimplifiedTrial> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a compassionate medical translator helping patients understand clinical trials. Use 8th-grade reading level, be warm and empathetic.
+		const prompt = `You are a compassionate medical translator helping patients understand clinical trials. Use 8th-grade reading level, be warm and empathetic.
 
 Trial Information:
 Title: ${trialData.title}
@@ -147,36 +149,36 @@ Create a JSON response with these sections (be empathetic, use simple words, avo
 
 Return ONLY the JSON, no markdown, no explanations.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error simplifying trial:", error);
-    return {
-      summary:
-        "We're having trouble understanding this trial right now. Please try again.",
-      purpose: "Information unavailable",
-      whatHappens: "Information unavailable",
-      timeCommitment: "Information unavailable",
-      risks: "Information unavailable",
-      benefits: "Information unavailable",
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error simplifying trial:", error);
+		return {
+			summary:
+				"We're having trouble understanding this trial right now. Please try again.",
+			purpose: "Information unavailable",
+			whatHappens: "Information unavailable",
+			timeCommitment: "Information unavailable",
+			risks: "Information unavailable",
+			benefits: "Information unavailable",
+		};
+	}
 }
 
 /**
  * Estimate eligibility for a trial based on patient info
  */
 export async function estimateEligibility(
-  trialCriteria: string,
-  patientInfo: string,
+	trialCriteria: string,
+	patientInfo: string,
 ): Promise<EligibilityEstimate> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a compassionate medical assistant helping patients understand if they might qualify for a clinical trial.
+		const prompt = `You are a compassionate medical assistant helping patients understand if they might qualify for a clinical trial.
 
 Trial Eligibility Criteria:
 ${trialCriteria}
@@ -198,39 +200,39 @@ Analyze the match and return ONLY a JSON object (no markdown):
 
 Be encouraging but honest. Use 8th-grade reading level.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error estimating eligibility:", error);
-    return {
-      score: 50,
-      level: "medium",
-      factors: {
-        positive: [],
-        negative: [],
-        neutral: ["Unable to analyze at this time"],
-      },
-      explanation:
-        "We're having trouble checking eligibility right now. Please try again or contact the study team.",
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error estimating eligibility:", error);
+		return {
+			score: 50,
+			level: "medium",
+			factors: {
+				positive: [],
+				negative: [],
+				neutral: ["Unable to analyze at this time"],
+			},
+			explanation:
+				"We're having trouble checking eligibility right now. Please try again or contact the study team.",
+		};
+	}
 }
 
 /**
  * Calculate travel burden for a clinical trial
  */
 export async function calculateTravelBurden(
-  trialLocation: string,
-  patientLocation: string,
-  visitFrequency: string,
+	trialLocation: string,
+	patientLocation: string,
+	visitFrequency: string,
 ): Promise<TravelBurden> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a compassionate assistant helping patients understand the travel commitment for a clinical trial.
+		const prompt = `You are a compassionate assistant helping patients understand the travel commitment for a clinical trial.
 
 Trial Location: ${trialLocation}
 Patient Location: ${patientLocation}
@@ -246,33 +248,33 @@ Assess the travel burden and return ONLY a JSON object (no markdown):
 
 Be practical and empathetic. Consider distance, frequency, and accessibility.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error calculating travel burden:", error);
-    return {
-      score: 50,
-      level: "medium",
-      factors: ["Unable to calculate at this time"],
-      recommendations: ["Contact the study team to discuss travel options"],
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error calculating travel burden:", error);
+		return {
+			score: 50,
+			level: "medium",
+			factors: ["Unable to calculate at this time"],
+			recommendations: ["Contact the study team to discuss travel options"],
+		};
+	}
 }
 
 /**
  * Generate personalized next steps for a patient
  */
 export async function generateNextSteps(
-  context: string,
-  patientGoals?: string,
+	context: string,
+	patientGoals?: string,
 ): Promise<NextSteps> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a caring healthcare navigator helping a patient plan their next steps.
+		const prompt = `You are a caring healthcare navigator helping a patient plan their next steps.
 
 Current Situation:
 ${context}
@@ -289,30 +291,30 @@ Create personalized next steps in JSON format (no markdown):
 
 Be encouraging, specific, and actionable. Use simple, friendly language.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error generating next steps:", error);
-    return {
-      immediate: ["Talk to your doctor about your options"],
-      shortTerm: ["Research clinical trials that might be right for you"],
-      longTerm: ["Stay informed about new treatment developments"],
-      resources: ["CuraLink platform", "Your healthcare team"],
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error generating next steps:", error);
+		return {
+			immediate: ["Talk to your doctor about your options"],
+			shortTerm: ["Research clinical trials that might be right for you"],
+			longTerm: ["Stay informed about new treatment developments"],
+			resources: ["CuraLink platform", "Your healthcare team"],
+		};
+	}
 }
 
 /**
  * Translate medical jargon into simple language
  */
 export async function translateMedicalJargon(text: string): Promise<string> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a kind medical translator helping patients understand complex medical terms.
+		const prompt = `You are a kind medical translator helping patients understand complex medical terms.
 
 Medical text:
 "${text}"
@@ -321,15 +323,15 @@ Rewrite this in simple, friendly language that an 8th grader would understand. B
 
 Provide only the translation, no additional text.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
 
-    if (!simplified) throw new Error("Empty response");
-    return simplified;
-  } catch (error: any) {
-    console.error("Gemini Translate Error:", JSON.stringify(error, null, 2));
-    return "Unable to translate at this time. Please try again.";
-  }
+		if (!simplified) throw new Error("Empty response");
+		return simplified;
+	} catch (error: any) {
+		console.error("Gemini Translate Error:", JSON.stringify(error, null, 2));
+		return "Unable to translate at this time. Please try again.";
+	}
 }
 
 /**
@@ -340,13 +342,13 @@ Provide only the translation, no additional text.`;
  * Generate recruitment strategy for a clinical trial
  */
 export async function generateRecruitmentStrategy(
-  trialInfo: string,
-  targetPopulation: string,
+	trialInfo: string,
+	targetPopulation: string,
 ): Promise<RecruitmentStrategy> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a clinical trial recruitment expert helping researchers reach the right patients.
+		const prompt = `You are a clinical trial recruitment expert helping researchers reach the right patients.
 
 Trial Information:
 ${trialInfo}
@@ -365,33 +367,33 @@ Create a recruitment strategy in JSON format (no markdown):
 
 Be strategic, ethical, and patient-centered. Focus on authentic engagement.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error generating recruitment strategy:", error);
-    return {
-      targetAudience: ["Unable to analyze at this time"],
-      channels: ["Contact recruitment specialists"],
-      messaging: ["Please try again"],
-      timeline: "Unable to estimate",
-      considerations: ["Ensure ethical recruitment practices"],
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error generating recruitment strategy:", error);
+		return {
+			targetAudience: ["Unable to analyze at this time"],
+			channels: ["Contact recruitment specialists"],
+			messaging: ["Please try again"],
+			timeline: "Unable to estimate",
+			considerations: ["Ensure ethical recruitment practices"],
+		};
+	}
 }
 
 /**
  * Analyze patient eligibility criteria for clarity and accessibility
  */
 export async function analyzeEligibilityCriteria(
-  criteria: string,
+	criteria: string,
 ): Promise<PatientEligibilityAnalysis> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a clinical trial design expert analyzing eligibility criteria for patient-friendliness.
+		const prompt = `You are a clinical trial design expert analyzing eligibility criteria for patient-friendliness.
 
 Eligibility Criteria:
 ${criteria}
@@ -407,33 +409,33 @@ Analyze and return JSON (no markdown):
 
 Focus on patient accessibility and clarity while maintaining scientific validity.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error analyzing eligibility:", error);
-    return {
-      likelyEligible: 50,
-      requiredCriteria: ["Unable to analyze at this time"],
-      optionalCriteria: [],
-      exclusions: [],
-      recommendations: ["Please try again or consult with trial design team"],
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error analyzing eligibility:", error);
+		return {
+			likelyEligible: 50,
+			requiredCriteria: ["Unable to analyze at this time"],
+			optionalCriteria: [],
+			exclusions: [],
+			recommendations: ["Please try again or consult with trial design team"],
+		};
+	}
 }
 
 /**
  * Get suggestions for trial design improvements
  */
 export async function suggestTrialImprovements(
-  trialDesign: string,
+	trialDesign: string,
 ): Promise<TrialDesignSuggestions> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are a patient-centered clinical trial design consultant.
+		const prompt = `You are a patient-centered clinical trial design consultant.
 
 Trial Design:
 ${trialDesign}
@@ -449,35 +451,35 @@ Provide constructive feedback in JSON (no markdown):
 
 Be constructive, patient-focused, and scientifically sound. Prioritize patient experience while maintaining research quality.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
-    const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
+		const cleanContent = simplified.replace(/```json\n?|\n?```/g, "").trim();
 
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error("Error generating trial suggestions:", error);
-    return {
-      strengths: ["Unable to analyze at this time"],
-      improvements: ["Please try again"],
-      patientBurden: "Unable to assess",
-      recruitmentTips: ["Consult with patient advocates"],
-      ethicalConsiderations: [
-        "Ensure proper informed consent and patient safety",
-      ],
-    };
-  }
+		return JSON.parse(cleanContent);
+	} catch (error) {
+		console.error("Error generating trial suggestions:", error);
+		return {
+			strengths: ["Unable to analyze at this time"],
+			improvements: ["Please try again"],
+			patientBurden: "Unable to assess",
+			recruitmentTips: ["Consult with patient advocates"],
+			ethicalConsiderations: [
+				"Ensure proper informed consent and patient safety",
+			],
+		};
+	}
 }
 
 /**
  * Generate patient-friendly trial description
  */
 export async function generatePatientFriendlyDescription(
-  technicalDescription: string,
+	technicalDescription: string,
 ): Promise<string> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const prompt = `You are helping a researcher translate a technical trial description into patient-friendly language.
+		const prompt = `You are helping a researcher translate a technical trial description into patient-friendly language.
 
 Technical Description:
 ${technicalDescription}
@@ -491,52 +493,52 @@ Rewrite this for patients using:
 
 Provide only the patient-friendly description, no additional text.`;
 
-    const result = await model.generateContent(prompt);
-    const simplified = result.response.text()?.trim();
+		const result = await model.generateContent(prompt);
+		const simplified = result.response.text()?.trim();
 
-    if (!simplified) throw new Error("Empty response");
-    return simplified;
-  } catch (error) {
-    console.error("Error generating patient-friendly description:", error);
-    return "Unable to generate description at this time. Please try again.";
-  }
+		if (!simplified) throw new Error("Empty response");
+		return simplified;
+	} catch (error) {
+		console.error("Error generating patient-friendly description:", error);
+		return "Unable to generate description at this time. Please try again.";
+	}
 }
 
 /**
  * General AI chat function for both patients and researchers
  */
 export async function chat(
-  message: string,
-  role: "patient" | "researcher",
-  conversationHistory?: { role: string; content: string }[],
+	message: string,
+	role: "patient" | "researcher",
+	conversationHistory?: { role: string; content: string }[],
 ): Promise<string> {
-  try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+	try {
+		const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-    const systemPrompt =
-      role === "patient"
-        ? `You are a compassionate medical AI assistant helping patients understand clinical trials, medical conditions, and treatment options. Use 8th-grade reading level, be warm and empathetic, avoid medical jargon, and always encourage patients to consult with their healthcare team for medical decisions. You are knowledgeable, supportive, and patient-focused.`
-        : `You are a knowledgeable AI assistant helping clinical researchers with trial design, patient recruitment, eligibility criteria, and patient-centered research practices. Be professional, evidence-based, and focused on ethical, patient-friendly research. Help researchers understand patient perspectives and improve trial accessibility.`;
+		const systemPrompt =
+			role === "patient"
+				? `You are a compassionate medical AI assistant helping patients understand clinical trials, medical conditions, and treatment options. Use 8th-grade reading level, be warm and empathetic, avoid medical jargon, and always encourage patients to consult with their healthcare team for medical decisions. You are knowledgeable, supportive, and patient-focused.`
+				: `You are a knowledgeable AI assistant helping clinical researchers with trial design, patient recruitment, eligibility criteria, and patient-centered research practices. Be professional, evidence-based, and focused on ethical, patient-friendly research. Help researchers understand patient perspectives and improve trial accessibility.`;
 
-    let fullPrompt = systemPrompt + "\n\n";
+		let fullPrompt = systemPrompt + "\n\n";
 
-    if (conversationHistory && conversationHistory.length > 0) {
-      fullPrompt += "Previous conversation:\n";
-      conversationHistory.forEach((msg) => {
-        fullPrompt += `${msg.role}: ${msg.content}\n`;
-      });
-      fullPrompt += "\n";
-    }
+		if (conversationHistory && conversationHistory.length > 0) {
+			fullPrompt += "Previous conversation:\n";
+			conversationHistory.forEach((msg) => {
+				fullPrompt += `${msg.role}: ${msg.content}\n`;
+			});
+			fullPrompt += "\n";
+		}
 
-    fullPrompt += `User (${role}): ${message}\n\nAssistant:`;
+		fullPrompt += `User (${role}): ${message}\n\nAssistant:`;
 
-    const result = await model.generateContent(fullPrompt);
-    const response = result.response.text()?.trim();
+		const result = await model.generateContent(fullPrompt);
+		const response = result.response.text()?.trim();
 
-    if (!response) throw new Error("Empty response");
-    return response;
-  } catch (error) {
-    console.error("Error in chat:", error);
-    return "I'm having trouble responding right now. Please try again in a moment.";
-  }
+		if (!response) throw new Error("Empty response");
+		return response;
+	} catch (error) {
+		console.error("Error in chat:", error);
+		return "I'm having trouble responding right now. Please try again in a moment.";
+	}
 }
