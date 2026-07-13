@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
 
 				const isPasswordValid = await bcrypt.compare(
 					credentials.password,
-					user.passwordHash
+					user.passwordHash,
 				);
 
 				if (!isPasswordValid) {
@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
 	session: {
 		strategy: "jwt",
 	},
-	secret: "HkBMKWyEDKlOShmVv2jlcio01udH2Y+ibMzk4exTX1M=",
+	secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
